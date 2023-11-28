@@ -10,9 +10,14 @@
       </template>
       <template #default>
         <!-- 骨架屏加载完成显示 -->
-        <div class="banner_wrap">
-          <img v-for="(item, index) in lists" :src="item.imageUrl" :alt="item.typeTitle" :key="item.imageUrl" :class="`banner_img img-${index}`" />
-        </div>
+        <el-row :gutter="30">
+          <el-col v-for="(item, index) in lists.slice(0, 6)" :key="item.imageUrl" :span="5">
+            <div class="banner_wrap">
+              <img :src="item.imageUrl" :alt="item.typeTitle" :class="`banner_img img-${index}`" />
+            </div>
+          </el-col>
+        </el-row>
+
       </template>
     </el-skeleton>
   </div>

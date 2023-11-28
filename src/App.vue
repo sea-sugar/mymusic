@@ -35,14 +35,19 @@ import Footer from './components/Footer.vue';
   display: flex;
 }
 
-.el-header,
+.el-header {
+  background-color: #b3c0d1;
+  color: #333;
+  text-align: center;
+  line-height: 40px;
+}
+
 .el-footer {
   background-color: #b3c0d1;
   color: #333;
   text-align: center;
-  line-height: 60px;
+  height: 100px;
 }
-
 .el-aside {
   background-color: #d3dce6;
   color: #333;

@@ -8,6 +8,7 @@ const routes = [
     { path: '/music', name: 'music', component: () => import('../views/music/Index.vue')},
     { path: '/video', name: 'video', component: () => import('../views/video/Index.vue')},
     { path: '/dj', name: 'dj', component: () => import('../views/dj/Index.vue')},
+    { path: '/playlist', name: 'playlist', component: () => import('../views/index/Playlist.vue')},
 
 ];
 

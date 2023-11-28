@@ -1,18 +1,21 @@
 <template>
     <h1>你的专属歌单</h1>
     <div class="container">
-      <div class="image">
-        <div class="image-item" v-for="item in lists.slice(0, 9)" :key="item.id">
-          <img :src="item.picUrl" :alt="item.name">
-          <div class="name">{{ item.name }}</div>
-        </div>
-      </div>
+      <el-row :gutter="70">
+          <el-col v-for="(item, index) in lists.slice(0, 11)" :key="item.imageUrl" :span="2">
+            <div class="image-item">
+              <img :src="item.picUrl" :alt="item.name" @click="goToPlaylist(item.id)"/>
+              <div class="name">{{ item.name }}</div>
+            </div>
+          </el-col>
+      </el-row>
     </div>
   </template>
   
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getPersonalized } from '../../apis/http';
+import router from '../../router/index'
 
 const lists = ref([]);
 
@@ -24,6 +27,10 @@ const fetchData = async () => {
   } catch (error) {
     console.error('Error fetching lists:', error);
   }
+};
+
+const goToPlaylist = (playlistId) => {
+  router.push(`/playlist?id=${playlistId}`);
 };
 
 onMounted(fetchData);

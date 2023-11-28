@@ -1,42 +1,69 @@
 <template>
-    <h1>推荐新音乐</h1>
-    <div class="container">
-      <div class="image">
-        <div class="image-item" v-for="item in lists.slice(0, 9)" :key="item.id">
-          <div class="image-content">
-            <img :src="item.picUrl" :alt="item.name">
-            <div class="text">
-              <div class="name">{{ item.name }}</div>
-              <div class="artist">{{ item.song.artists[0].name }}</div>
+  <h1>推荐新音乐</h1>
+  <div class="container">
+    <div class="image">
+      <el-row :gutter="10">
+        <el-col v-for="(item, index) in lists.slice(0, 5)" :key="item.id" :span="4">
+          <div class="image-item">
+            <div class="image-content">
+              <img :src="item.picUrl" :alt="item.name" @click="handleImageClick(item)" />
+              <div class="text">
+                <div class="name">{{ item.name }}</div>
+                <div class="artist">{{ item.song.artists[0].name }}</div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="10">
+        <el-col v-for="(item, index) in lists.slice(5, 10)" :key="item.id" :span="4">
+          <div class="image-item">
+            <div class="image-content">
+              <img :src="item.picUrl" :alt="item.name" @click="handleImageClick(item)" />
+              <div class="text">
+                <div class="name">{{ item.name }}</div>
+                <div class="artist">{{ item.song.artists[0].name }}</div>
+              </div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
     </div>
+  </div>
 </template>
-  
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getNewsong } from '../../apis/http';
-
+import { useplayListInfoStore } from '../../store/index';
+const playListInfoStore = useplayListInfoStore();
 const lists = ref([]);
 
 const fetchData = async () => {
   try {
     const response = await getNewsong();
     lists.value = response.data.result;
-    console.log(lists.value);
   } catch (error) {
     console.error('Error fetching lists:', error);
   }
 };
 
 onMounted(fetchData);
+
+// 处理图片点击事件
+const handleImageClick = (item) => {
+  // 获取歌曲ID，并修改到store中
+  const songId = item.song.id;
+  playListInfoStore.currentMusicId = songId;
+  console.log(playListInfoStore.currentMusicId);
+};
 </script>
 
 <style scoped>
 .container {
   overflow: hidden;
+  width:  auto;
+  height: auto;
 }
 
 .image {
@@ -44,24 +71,27 @@ onMounted(fetchData);
   flex-wrap: wrap;
   align-items: flex-start;
   margin-left: 0px;
+  margin-right: 0px;
+  justify-content: flex-start; /* 左对齐显示内容 */
 }
 
 .image-item {
-  width: 160px; /* 调整图片项的宽度，以容纳图片和文本 */
+  width: 200px; /* 调整图片项的宽度，以容纳图片和文本 */
   height: auto;
   margin-right: 10px;
+  margin-left: 10px;
   margin-bottom: 10px;
+  transition: filter 0.3s; /* 添加过渡效果 */
 }
 
 .image-content {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .image-item img {
-  width: 60px; /* 图片宽度占满父容器 */
+  width: 80px; /* 图片宽度占满父容器 */
   height: auto;
-  
 }
 
 .text {
@@ -69,6 +99,7 @@ onMounted(fetchData);
   flex-direction: column;
   align-items: flex-start;
   margin-left: 10px; /* 调整文本与图片的间距 */
+  width:100px;
 }
 
 .name {
@@ -89,4 +120,5 @@ onMounted(fetchData);
 .name:hover {
   font-weight: bold;
 }
+
 </style>
