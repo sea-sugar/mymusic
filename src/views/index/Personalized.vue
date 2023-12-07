@@ -1,8 +1,8 @@
 <template>
     <h1>你的专属歌单</h1>
     <div class="container">
-      <el-row :gutter="70">
-          <el-col v-for="(item, index) in lists.slice(0, 11)" :key="item.imageUrl" :span="2">
+      <el-row :gutter="10" justify="space-between">
+          <el-col v-for="(item, index) in lists.slice(0, 12)" :key="item.imageUrl" :span="2">
             <div class="image-item">
               <img :src="item.picUrl" :alt="item.name" @click="goToPlaylist(item.id)"/>
               <div class="name">{{ item.name }}</div>
@@ -10,7 +10,7 @@
           </el-col>
       </el-row>
     </div>
-  </template>
+</template>
   
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -23,7 +23,6 @@ const fetchData = async () => {
   try {
     const response = await getPersonalized();
     lists.value = response.data.result;
-    console.log(lists.value);
   } catch (error) {
     console.error('Error fetching lists:', error);
   }
@@ -36,16 +35,11 @@ const goToPlaylist = (playlistId) => {
 onMounted(fetchData);
 </script>
 
-<style>
+<style scoped>
 .container {
+  max-width: 100%;
   overflow: hidden;
-}
-
-.image {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start; /* 修改为 flex-start，确保名称在图片下方 */
-  margin-left: 30px;
+  justify-content: space-between;
 }
 
 .image-item {
@@ -59,7 +53,7 @@ onMounted(fetchData);
 }
 
 .image-item img {
-  width: 100%; /* 图片宽度占满父容器 */
+  width: 120px; /* 图片宽度占满父容器 */
   height: auto;
 }
 
@@ -69,9 +63,9 @@ onMounted(fetchData);
   font-size:11px;
 }
 .image-item img:hover{
-  filter: brightness(50%);
+  filter: brightness(75%);
 }
-.name:hover{
+.image-item:hover{
   font-weight: bold;
 }
 </style>

@@ -5,18 +5,32 @@
       <template #template> 
         <!-- 骨架屏加载ing显示 -->
         <el-skeleton-item class="skeleton-img" variant="image" />
-        <el-skeleton-item class="skeleton-img" variant="image" />
-        <el-skeleton-item class="skeleton-img" variant="image" />
       </template>
       <template #default>
         <!-- 骨架屏加载完成显示 -->
-        <el-row :gutter="30">
+        <!-- <el-row :gutter="30">
           <el-col v-for="(item, index) in lists.slice(0, 6)" :key="item.imageUrl" :span="5">
             <div class="banner_wrap">
-              <img :src="item.imageUrl" :alt="item.typeTitle" :class="`banner_img img-${index}`" />
+              <img :src="item.imageUrl" :alt="item.typeTitle" :class="`banner_img img-${index}`" @click="handleImageClick(item)"/>
             </div>
           </el-col>
-        </el-row>
+        </el-row> -->
+        <swiper
+        :modules="modules"
+        :slides-per-view="4"
+        :space-between="25"
+        :scrollbar="{ draggable: true }"
+        @swiper="onSwiper"
+        @slideChange="onSlideChange"
+        
+      >
+      <!-- :pagination="{ clickable: true }" 下面的小圆点 -->
+      <!--  navigation 左右指示表 -->
+        <swiper-slide v-for="(item, index) in lists" :key="item.imageUrl" span="15">
+          <img :src="item.imageUrl" :alt="item.typeTitle" :class="`banner_img img-${index}`" @click="handleImageClick(item)"/>
+        </swiper-slide>
+        
+      </swiper>
 
       </template>
     </el-skeleton>
@@ -25,8 +39,27 @@
 <!-- 待解决 -->
 <!-- 图片的显示数量将根据页面宽度自适应调整，并始终显示在一行内，不会超出容器宽度 -->
 <script setup>
+
+// 使用swiper
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+const modules = [Navigation, Pagination, Scrollbar, A11y]
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+
+const onSwiper = (swiper) => {
+  console.log(swiper);
+};
+const onSlideChange = () => {
+  console.log('slide change');
+};
+
 import { ref, onMounted } from 'vue';
-import { getBanner } from '../../apis/http';
+import { getBanner,getMusic } from '../../apis/http';
+import { useplayListInfoStore } from '../../store/index';
+const playListInfoStore = useplayListInfoStore();
 
 const lists = ref([]);//获取
 const loading = ref(true);
@@ -41,15 +74,34 @@ const fetchData = async () => {
   }
 };
 
+const handleImageClick = (i) => {
+  getMusic(i.targetId, "exhigh")
+    .then((res) => {
+      console.log(res);
+      const song = res.data.data[0];
+      song.name = "sea_sugar_music"
+      playListInfoStore.setCurrentMusic(song);
+      console.log("播放单曲" ,song.id);
+
+    })
+    .catch((error) => {
+      console.error("请求音乐数据出错", error);
+    });
+};
+
 onMounted(fetchData);//以确保在组件挂载后立即执行数据获取，并更新lists和loading的值。
 </script>
 
 <style scoped>
 
-.skeleton-img,
-.banner_img {
+.skeleton-img{
   width: auto; 
   height: 120px;
+  margin: 10px; 
+}
+.banner_img {
+  width: auto; 
+  height: 130px;
   margin: 10px; 
 }
 .container {

@@ -1,10 +1,10 @@
 <template>
     <div class="container" part="container">
-      <div class="label">{{label}}</div>
+      <div class="label">label</div>
       <div class="operate">
         <div class="operate-seq">
-          <img src="/prev.svg" title="上一首" @click="prev">
-          <img :src="!isPlaying ? '/play.svg' : '/pause.svg'"  :title="isPlaying ? '暂停' : '播放'" @click="toggle">
+          <img src="/prev.svg" title="上一首">
+          <img src="/play.svg" title="播放" @click="toggleAudio">
           <img src="/next.svg" title="下一首" @click="next">
         </div>
         <div class="operate-time">
@@ -13,200 +13,132 @@
           <output class="time-total">{{ formatTime(totalTime) }}</output>
         </div>
         <div class="operate-volume">
-          <img :src=" isMuted ? '/muted.svg' : '/unmuted.svg'" :title="isMuted ? '取消静音' : '静音'" @click="toggleMute">
-          <input class="volume-range" type="range" v-model="volume" min="0" step="0.01" max="1" @input="handleVolumeChange">
+          <img src="/muted.svg" title="静音" @click="toggleMute">
+          <input class="volume-range" type="range" v-model="volume" min="0" step="0.01" max="1">
         </div>
-        <img :src="cmode" :title="cmodetitle" @click="modeChange">
-        <img src="/more.svg" title="更多">   
-        
+        <!-- 其他操作区代码 -->
       </div>
-      <audio ref="audioElement"  @timeupdate="updateProgress" @ended="next"  >
-        <source :src="playListInfoStore.playList[currentAudioIndex]" type="audio/mp3">
-      </audio>
     </div>
-  </template>
-<script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useplayListInfoStore } from '../store/index';
-const playListInfoStore = useplayListInfoStore();
-
-const audioElement = ref(null);
-const label = ref('Sea-Sugar Player');
-const currentTime = ref(0);
-const totalTime = ref(0);
-const progress = ref(0);
-const volume = ref(0.7);
-const isPlaying = ref(false);
-const isMuted = ref(false);
-const mode = ref(0);
-const audioList = ['http://m8.music.126.net/20231207144259/a0d8d655f22ed5369e3303d7a125db64/ymusic/2fb0/8efc/8f05/c3ea45c8fe228f771e8edf0f61aafd5a.mp3',
-'http://m801.music.126.net/20231207144507/f1cad12c287e848693713243571f5adc/jdymusic/obj/w5zDlMODwrDDiGjCn8Ky/1652565624/36c5/a7c7/a542/453d4d6c347381fdbda4c5e91d79bb80.mp3',
-'http://m7.music.126.net/20231207190918/4f78292705891a21bd32d93579297873/ymusic/a361/912d/ea1d/baa1098153af868404c00c174fb78480.mp3',];
-let currentAudioIndex = 0;
-
-// 播放上一首
-const prev = () => {
-  if(mode.value === 0){
-    currentAudioIndex = (currentAudioIndex - 1 + playListInfoStore.playList.length) % playListInfoStore.playList.length;
-    playCurrentAudio();
-    console.log("0 , 顺序播放 , 上一首");
-  }
-  else if(mode.value === 1){
-    currentAudioIndex = (currentAudioIndex - 1 + playListInfoStore.playList.length) % playListInfoStore.playList.length;
-    playCurrentAudio();
-    console.log("1 , 随机播放 , 上一首 待完善");
-  }
-  else{
-    playCurrentAudio();
-    console.log("2 , 单曲循环 , 上一首");
-  }
-};
-
-// 切换播放/暂停状态
-const toggle = () => {
-  if (playListInfoStore.playList.length === 0) {
-    console.log("当前播放列表无音乐",playListInfoStore.playList.length);
-    return ;
-  }
-  if (label.value === 'Sea-Sugar Player') {
-    playCurrentAudio();
-  }
-  if (isPlaying.value) {
-    pauseAudio();
-    console.log("暂停");
-  } else {
-    playAudio();
-    console.log("播放");
-  }
-  playListInfoStore.isPlaying = isPlaying.value;
-  console.log("当前播放列表：",playListInfoStore.playList);
-};
-
-// 播放下一首
-const next = () => {
-  if(mode.value === 0){
-    currentAudioIndex = (currentAudioIndex + 1) % playListInfoStore.playList.length;
-    playCurrentAudio();
-    console.log("0 , 顺序播放 , 下一首");
-  }
-  else if(mode.value === 1){
-    currentAudioIndex = (currentAudioIndex + 1) % playListInfoStore.playList.length;
-    playCurrentAudio();
-    console.log("1 , 随机播放 , 下一首 待完善");
-  }
-  else{
-    playCurrentAudio();
-    console.log("2 , 单曲循环 , 下一首");
-  }
+</template>
   
-};
+<script setup>
+    import { Howl, Howler } from 'howler';
+    import { onMounted, ref, watch } from "vue";
+    const playlist = [
+        'http://m702.music.126.net/20231206194029/b8196b95c195e6ab8cdc852895c639de/jd-musicrep-ts/6269/cb92/f918/d859a5152659296b2f23e273c7303988.mp3',
+        'http://m801.music.126.net/20231206200534/56c210694b89a5675f4bc8136bb739e4/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28481675631/f606/2c21/7810/08f72d2b021e58bc0d9f4fefc43b0deb.mp3'
+        ];
 
-// 格式化时间（将秒数转换为分:秒格式）
-const formatTime = (time) => {
-  if(!time){
-    return '00:00';
-  }
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-  return `${minutes}:${seconds}`;
+    const currentIndex = ref(0);
+    
+    const sound = new Howl({
+        src: playlist[currentIndex.value],
+        html5: true,
+        volume: 0.5,
+        preload:true,
+    });
+    
+    const currentTime = ref(0);
+    const totalTime = ref(0);
+    const progress = ref(0);
+    const volume = ref(0.5);
+    const isMuted = ref(false);
+    const pausedPosition = ref(0);
+    
+    sound.on('end', function() {
+        console.log('播放结束！');
+    });
+    
+    // 监听音频加载完成事件
+    sound.on('load', function() {
+        totalTime.value = sound.duration();
+        console.log("音频加载成功");
+        // console.log("totalTime.value is",totalTime.value);
+    });
+  
+    // 监听音频时间更新事件
+    sound.on('play', function() {
+    const updateProgress = () => {
+        currentTime.value = sound.seek();
+        progress.value = currentTime.value / totalTime.value;
+        if (sound.playing()) {
+        requestAnimationFrame(updateProgress);
+        }
+    };
+    updateProgress();
+    });    
 
-};
+    // 播放/暂停音频
+    function toggleAudio() {
+    if (sound.playing()) {
+        // 暂停音频，并记录当前播放位置
+        sound.pause();
+        pausedPosition.value = sound.seek();
+        console.log('暂停');
+    } else {
+        // 继续播放音频，从暂停的位置开始
+        sound.seek(pausedPosition.value);
+        sound.play();
+        console.log('播放');
+    }
+    }
+    // 跳转到指定时间
+    function seekAudio() {
+        const seekTime = totalTime.value * progress.value;
+        sound.seek(seekTime);
+        console.log('跳转到时间：', seekTime);
+    }
+    
+    // 切换静音状态
+    function toggleMute() {
+        isMuted.value = !isMuted.value;
+        sound.mute(isMuted.value);
+        console.log(isMuted.value ? '静音' : '取消静音');
+    }
+    
+    // 格式化时间
+    function formatTime(time) {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        return formattedTime;
+    }
+    
+    // 监听音量变化
+    watch(volume, (newVolume) => {
+        sound.volume(newVolume);
+        console.log('音量：', newVolume);
+    });
+    const next = () => {
+        if (sound.playing()) {
+            sound.pause();
+        }
+        sound.unload();
 
-// 更新播放进度
-const updateProgress = () => {
-  currentTime.value = audioElement.value.currentTime;
-  totalTime.value = audioElement.value.duration;
-  progress.value = currentTime.value / totalTime.value;
-};
+        currentIndex.value = (currentIndex.value + 1) % playlist.length;
 
-// 跳转到指定播放时间
-const seekAudio = () => {
-  if (isPlaying.value) {
-    pauseAudio();
-  }
-  const seekTime = progress.value * totalTime.value;
-  audioElement.value.currentTime = seekTime;
-  playAudio();
-};
+        sound = new Howl({
+            src: playlist[currentIndex.value],
+            html5: true,
+            volume: volume.value,
+            preload: true,
+        });
 
-// 切换静音状态
-const toggleMute = () => {
-  isMuted.value = !isMuted.value;
-  console.log(!isMuted.value ? '取消静音' : '静音');
-  audioElement.value.muted = isMuted.value;
-};
+        sound.once('load', () => {
+            sound.play();
+            console.log("下一首");
+        });
+    }
+    // 在组件加载完成后自动播放音频
+    //   onMounted(() => {
+    //     sound.play();
+    //     console.log('播放');
+    //   });
+    
 
-// 监听音量变化
-const handleVolumeChange = () => {
-  audioElement.value.volume = volume.value;
-  console.log("当前音量",volume.value);
-};
-
-// 播放当前音频
-const playCurrentAudio = () => {
-  const audioUrl = playListInfoStore.playList[currentAudioIndex].url;
-  audioElement.value.src = audioUrl;
-  console.log("当前播放歌曲链接：",audioElement.value.src);
-  label.value = playListInfoStore.playList[currentAudioIndex].name;
-  audioElement.value.load();
-  setTimeout(() => {
-    playAudio();
-  }, 1000);
-
-};
-// 播放音频
-const playAudio = () => {
-  audioElement.value.play();
-  isPlaying.value = true;
-};
-
-// 暂停音频
-const pauseAudio = () => {
-  audioElement.value.pause();
-  isPlaying.value = false;
-};
-
-watch(() => playListInfoStore.currentMusic,(isnew,isold)=>{
-  if(isPlaying.value){
-    toggle();
-  }
-  playListInfoStore.playList.splice(currentAudioIndex+1,0,isnew);
-  next();
-  console.log(playListInfoStore.playList);
-})
-
-const cmode = computed(()=>{
-  if(mode.value === 0){//顺序播放
-    return '/swap.svg'
-  }
-  else if(mode.value === 1){//随机播放
-    return '/shuffle.svg'
-  }
-  else{// 2 单曲循环
-    return '/repeat.svg'
-  }
-})
-
-const cmodetitle = computed(()=>{
-  if(mode.value === 0){
-    return '顺序播放'
-  }
-  else if(mode.value === 1){
-    return '随机播放'
-  }
-  else{
-    return '单曲循环'
-  }
-})
-
-const modeChange = ()=>{
-  mode.value = (mode.value + 1) % 3 ;
-}
 </script>
 
-
-
-  <style scoped>
+<style scoped>
             /* :host {
                 --1rem: 1rem;
                 --ui-audio-icon-prev: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M341.333 746.667A21.333 21.333 0 0 1 320 768h-42.667A21.333 21.333 0 0 1 256 746.667V277.333A21.333 21.333 0 0 1 277.333 256H320a21.333 21.333 0 0 1 21.333 21.333zM768 280.32a32.853 32.853 0 0 0-15.787-27.733l-5.12-2.56a31.147 31.147 0 0 0-34.133 0L398.507 472.32a32 32 0 0 0-13.654 26.027V524.8a32 32 0 0 0 13.654 26.027L712.96 771.84a31.147 31.147 0 0 0 34.133 0l5.12-2.56A32.427 32.427 0 0 0 768 741.547z'/%3E%3C/svg%3E");

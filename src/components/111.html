@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于howlerjs的简易音频播放器</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 1rem;
+        }
+        .audio-table {
+            width: 100%;
+            margin-top: 30px;
+            font-size: .875rem;
+        }
+        .audio-table td {
+            border-bottom: 1px dashed #ddd;
+        }
+        .audio-table td,
+        .audio-table th {
+            padding: 5px;
+        }
+        .col2, .col3 {
+            text-align: center;
+        }
+        .col2 {
+            color: gray;
+        }
+        .active td {
+            color: #eb4646;
+        }
+        .play-check {
+            display: inline-grid;
+            width: 32px; height: 32px;
+            place-items: center;
+            -webkit-appearance: none;
+            appearance: none;
+            --mask-img: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M512 85.333A426.667 426.667 0 1 0 938.667 512 426.667 426.667 0 0 0 512 85.333zm0 768A341.333 341.333 0 1 1 853.333 512 341.333 341.333 0 0 1 512 853.333zm-78.933-523.946A32 32 0 0 0 384 356.267v311.466a32 32 0 0 0 49.067 26.88l249.6-155.306a32.427 32.427 0 0 0 0-54.614z'/%3E%3C/svg%3E");
+            color: inherit;
+        }
+        .play-check::before {
+            content: '';
+            display: block;
+            width: inherit; height: inherit;
+            background-color: currentColor;
+            -webkit-mask: var(--mask-img) no-repeat center / 24px 24px;
+            mask: var(--mask-img) no-repeat center / 24px 24px;
+        }
+
+        .play-check:checked {
+            --mask-img: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M512 85.333A426.667 426.667 0 1 0 938.667 512 426.667 426.667 0 0 0 512 85.333zm0 768A341.333 341.333 0 1 1 853.333 512 341.333 341.333 0 0 1 512 853.333zm-64-512h-42.667A21.333 21.333 0 0 0 384 362.667v298.666a21.333 21.333 0 0 0 21.333 21.334H448a21.333 21.333 0 0 0 21.333-21.334V362.667A21.333 21.333 0 0 0 448 341.333zm170.667 0H576a21.333 21.333 0 0 0-21.333 21.334v298.666A21.333 21.333 0 0 0 576 682.667h42.667A21.333 21.333 0 0 0 640 661.333V362.667a21.333 21.333 0 0 0-21.333-21.334z'/%3E%3C/svg%3E");
+        }
+        td label,
+        .play-check {
+            cursor: pointer;
+        }
+        td label:hover,
+        .play-check:hover {
+            color: #eb4646;
+        }
+    </style>
+</head>
+<body>
+    <h1>基于howlerjs的简易音频播放器</h1>
+
+    <ui-audio id="audio" controls loop="0"></ui-audio>
+
+    <table id="list" class="audio-table">
+        <thead>
+            <tr>
+                <th align="left">播放列表</th>
+                <th>时长</th>
+                <th>播放</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <p align="center" style="margin-top: 100px;"><small>by zhangxinxu(.com)</small> <a href="https://www.zhangxinxu.com/wordpress/?p=10349">使用文档</a></p>
+
+    <template id="tpl">
+        ${data.map(function (obj, index) {
+            return `<tr>
+              <td class="col1"><label for="c${obj.id}">${obj.title}</label></td>
+              <td class="col2">${formatTime(obj.duration)}</td>
+              <td class="col3"><input id="c${obj.id}" data-index="${index}" class="play-check" type="checkbox" value="${obj.url}"></td>
+            </tr>`;
+          }).join('')}
+    </template>
+
+    <script type="module" src="./src/ui-audio.js"></script>
+    <script type="module">
+        const dataList = [{
+            id: '0001',
+            title: '语音 第一段 得瑟',
+            duration: '16',
+            url: './audio/01.mp3'
+        }, {
+            id: '0002',
+            title: '语音 第二段 现身',
+            duration: '10',
+            url: './audio/02.mp3'
+        }, {
+            id: '0003',
+            title: '语音 第三段 惋惜',
+            duration: '10',
+            url: './audio/03.mp3'
+        }, {
+            id: '0004',
+            title: '语音 第四段 旁白 错误认识',
+            duration: '9',
+            url: './audio/04.mp3'
+        }, {
+            id: '0005',
+            title: '语音 第五段 提醒',
+            duration: '13',
+            url: './audio/05.mp3'
+        }, {
+            id: '0006',
+            title: '语音 第六段 确认',
+            duration: '17',
+            url: './audio/06.mp3'
+        }, {
+            id: '0007',
+            title: '语音 第七段 承认',
+            duration: '10',
+            url: './audio/07.mp3'
+        }, {
+            id: '0008',
+            title: '语音 第八段 攻击',
+            duration: '9',
+            url: './audio/08.mp3'
+        }, {
+            id: '0009',
+            title: '语音 第十段 防御',
+            duration: '10',
+            url: './audio/09.mp3'
+        }, {
+            id: '00010',
+            title: '语音 第十一段 反击',
+            duration: '14',
+            url: './audio/10.mp3'
+        }, {
+            id: '00011',
+            title: '语音 第十二段 水龙弹',
+            duration: '7',
+            url: './audio/11.mp3'
+        }, {
+            id: '00012',
+            title: '语音 第十三段 嘲笑',
+            duration: '11',
+            url: './audio/12.mp3'
+        }];
+
+        String.prototype.interpolate = function (params) {
+            const names = Object.keys(params);
+            const vals = Object.values(params);
+
+            return new Function(...names, `return \`${this}\`;`)(...vals);
+        };
+
+        self.formatTime = function (secs) {
+            var minutes = Math.floor(secs / 60) || 0;
+            var seconds = (secs - minutes * 60) || 0;
+        
+            return minutes + ':' + String(seconds).padStart(2, '0');
+        }
+
+        let render = function () {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = tpl.innerHTML.interpolate({
+                data: dataList
+            });
+
+            status();
+        };
+
+        let status = function () {
+            const tbody = document.querySelector('tbody');
+            // 播放状态变化
+            tbody.querySelectorAll('[type="checkbox"]').forEach(checkbox => {
+                // 先设置所有的都不是播放
+                checkbox.checked = false;
+                // 如果播放的音频就是当前列表
+                if (checkbox.value == audio.src) {
+                    checkbox.closest('tr').classList.add('active');
+                    // 是否播放
+                    if (!audio.paused) {
+                        checkbox.checked = true;
+                    }
+                } else {
+                    checkbox.closest('tr').classList.remove('active');
+                }
+            });
+        };
+
+        // 播放执行
+        let play = function (index) {
+            let data = dataList[index];
+            if (!data) {
+                return;
+            }
+
+            audio.src = data.url;
+            audio.label = data.title;
+
+            // 地址设置
+            setSrc();
+
+            render();
+        };
+
+        let setSrc = function () {
+            // 根据 src 获得 index
+            let index = dataList.findIndex((obj) => {
+                return obj.url === audio.src;
+            });
+
+            if (index < 0) {
+                return;
+            }
+
+            // 标题
+            audio.label = dataList[index].title;
+
+            // 上一个，下一个
+            let dataPrev = dataList[index - 1];
+            let dataNext = dataList[index + 1];
+
+            // 随机
+            let arrIndexFilter = [];          
+            dataList.forEach((obj, i) => {
+                if (i !== index)  {
+                    arrIndexFilter.push(i);
+                }
+            });
+
+            let indexRandNext = arrIndexFilter[Math.floor(Math.random() * arrIndexFilter.length)];
+
+            // 再次随机
+            let arrIndexFilter2 = [];
+            dataList.forEach((obj, i) => {
+                if (i !== index && i !== indexRandNext)  {
+                    arrIndexFilter2.push(i);
+                }
+            });
+
+            let indexRandprev = arrIndexFilter2[Math.floor(Math.random() * arrIndexFilter2.length)];
+
+            // 开始设置地址
+            // 下一个地址处理
+            if (!audio.prevsrc) {
+                // 如果是随机播放
+                if (audio.loop === '1') {
+                    audio.prevsrc = dataList[indexRandprev].url;
+                } else if (dataPrev) {
+                    audio.prevsrc = dataPrev.url;
+                } else {
+                    audio.prevsrc = 'none';
+                }
+            }
+
+            // 如果有地址，则不处理
+            if (!audio.nextsrc) {
+                // 如果是随机播放
+                if (audio.loop === '1') {
+                    audio.nextsrc = dataList[indexRandNext].url;
+                } else if (dataNext) {
+                    audio.nextsrc = dataNext.url;
+                } else {
+                    audio.nextsrc = 'none';
+                }
+            }
+        };
+
+        // 事件处理
+        list.addEventListener('click', function (event) {
+            let target = event.target;
+            if (target && target.type == 'checkbox') {
+                if (!this.checked) {
+                    if (audio.src != target.value) {
+                        audio.src = target.value;
+                        audio.prevsrc = '';
+                        audio.nextsrc = '';
+                    }                    
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+            }
+        });
+
+        // 第一项数据准备
+        play(0);
+
+        // 顺序播放和随机播放的处理
+        audio.addEventListener('play', function () {
+            // 播放时的地址设置
+            setSrc();
+            // 状态设置
+            status();
+        });
+
+        audio.addEventListener('pause', function () {
+            // 状态设置
+            status();
+        });
+    </script>
+</body>
+</html>

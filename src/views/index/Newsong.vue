@@ -2,7 +2,7 @@
   <h1>推荐新音乐</h1>
   <div class="container">
     <div class="image">
-      <el-row :gutter="10">
+      <el-row :gutter="40">
         <el-col v-for="(item, index) in lists.slice(0, 5)" :key="item.id" :span="4">
           <div class="image-item">
             <div class="image-content">
@@ -15,7 +15,7 @@
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="10">
+      <el-row :gutter="40">
         <el-col v-for="(item, index) in lists.slice(5, 10)" :key="item.id" :span="4">
           <div class="image-item">
             <div class="image-content">
@@ -50,12 +50,11 @@ const fetchData = async () => {
 
 onMounted(fetchData);
 
-// 处理图片点击事件
+// newsong点击事件
 const handleImageClick = (item) => {
-  // 获取歌曲ID，并修改到store中
-  const songId = item.song.id;
-  playListInfoStore.currentMusicId = songId;
-  console.log(playListInfoStore.currentMusicId);
+  console.log(item.song);
+  playListInfoStore.setCurrentMusic(item.song);
+  console.log("播放单曲" ,item.song.id , item.song.name);
 };
 </script>
 
@@ -76,12 +75,16 @@ const handleImageClick = (item) => {
 }
 
 .image-item {
-  width: 200px; /* 调整图片项的宽度，以容纳图片和文本 */
+  width: 250px; /* 调整图片项的宽度，以容纳图片和文本 */
   height: auto;
-  margin-right: 10px;
+  margin-right: 30px;
   margin-left: 10px;
   margin-bottom: 10px;
   transition: filter 0.3s; /* 添加过渡效果 */
+  justify-content: space-between;
+}
+.image-item:hover{
+  background-color: #cac6c6;
 }
 
 .image-content {

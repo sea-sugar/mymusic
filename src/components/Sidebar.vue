@@ -41,7 +41,7 @@
           <span>下载歌曲</span>
         </el-menu-item>
 
-        <el-menu-item index="4">
+        <el-menu-item index="lastplay">
           <span>最近播放</span>
         </el-menu-item>
 

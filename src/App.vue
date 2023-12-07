@@ -12,11 +12,14 @@
   
       <el-main style="left: 200px;">   
         <!-- 主体部分，页面渲染区域 -->
-        <router-view></router-view>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
+        
       </el-main>
 
       <el-footer>
-        <Footer/>
+          <Footer/>
       </el-footer>
     </el-container>
 
