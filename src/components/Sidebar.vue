@@ -13,35 +13,31 @@
         router
       >
       <!-- 是否启用 vue-router 模式。 启用该模式会在激活导航时以 index 作为 path 进行路由跳转 -->
-        <el-menu-item index="index">
+        <el-menu-item index="/index">
           <span>推荐</span>
         </el-menu-item>
 
-        <el-menu-item index="music">
+        <el-menu-item index="/music">
           <span>音乐馆</span>
         </el-menu-item>
 
-        <el-menu-item index="video" >
+        <el-menu-item index="/video" >
           <span>视频</span>
         </el-menu-item>
 
-        <el-menu-item index="dj">
+        <el-menu-item index="/dj">
           <span>电台</span>
         </el-menu-item>
 
-        <el-menu-item index="1">
-          <span>我的喜欢</span>
+        <el-menu-item index="/home">
+          <span>我的音乐</span>
         </el-menu-item>
 
-        <el-menu-item index="2">
-          <span>本地歌曲</span>
-        </el-menu-item>
-
-        <el-menu-item index="3" disabled>
+        <el-menu-item index="/3" disabled>
           <span>下载歌曲</span>
         </el-menu-item>
 
-        <el-menu-item index="lastplay">
+        <el-menu-item index="/lastplay">
           <span>最近播放</span>
         </el-menu-item>
 

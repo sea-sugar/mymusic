@@ -14,11 +14,10 @@
           class="playlist-song"
           >
           <div class="song-info">
-              <!-- <div class="song-name">{{ song.name }}</div>
+              <div class="song-name">{{ song.name }}</div>
               <div class="song-artist">{{ song.ar[0].name }}</div>
               <div class="song-album">{{ song.al.name }}</div>
-              <div class="song-time">{{ formattedTime(song.dt) }}</div> -->
-              {{song}}
+              <div class="song-time">{{ formattedTime(song.dt) }}</div>
           </div>
           </div>
         </div>
@@ -29,13 +28,30 @@
 import { useplayListInfoStore } from '../../store/index';
 const playListInfoStore = useplayListInfoStore();
 
+console.log(playListInfoStore.historyList);
+
+const formattedTime = (duration) => {
+    const minutes = Math.floor(duration / 1000 / 60);
+    const seconds = Math.floor((duration / 1000) % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
 
 </script>
 
-<style>
-  .playlist-songs{
-    width: 100%;
+
+<style scoped>
+  .playlist-song {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f2f2f2;
+    cursor: pointer;
   }
+  
+  .playlist-song:last-child {
+    border-bottom: none;
+  }
+  
   .song-info {
     flex: 1;
     margin-left: 10px;
@@ -47,4 +63,15 @@ const playListInfoStore = useplayListInfoStore();
     margin-bottom: 5px;
 
   }
+  .song-info div{
+    width:20%;
+  }
+  .playlist-song:hover {
+    background-color: #f5f7fa;
+  }
+
+  .playlist-songs{
+    width: 100%;
+  }
+
 </style>

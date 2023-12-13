@@ -39,9 +39,6 @@ const volume = ref(0.7);
 const isPlaying = ref(false);
 const isMuted = ref(false);
 const mode = ref(0);
-const audioList = ['http://m8.music.126.net/20231207144259/a0d8d655f22ed5369e3303d7a125db64/ymusic/2fb0/8efc/8f05/c3ea45c8fe228f771e8edf0f61aafd5a.mp3',
-'http://m801.music.126.net/20231207144507/f1cad12c287e848693713243571f5adc/jdymusic/obj/w5zDlMODwrDDiGjCn8Ky/1652565624/36c5/a7c7/a542/453d4d6c347381fdbda4c5e91d79bb80.mp3',
-'http://m7.music.126.net/20231207190918/4f78292705891a21bd32d93579297873/ymusic/a361/912d/ea1d/baa1098153af868404c00c174fb78480.mp3',];
 let currentAudioIndex = 0;
 
 // 播放上一首
@@ -98,6 +95,7 @@ const next = () => {
     playCurrentAudio();
     console.log("2 , 单曲循环 , 下一首");
   }
+  playListInfoStore.addhistoryList(playListInfoStore.playList[currentAudioIndex])
   
 };
 
@@ -206,7 +204,7 @@ const modeChange = ()=>{
 
 
 
-  <style scoped>
+<style scoped>
             /* :host {
                 --1rem: 1rem;
                 --ui-audio-icon-prev: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M341.333 746.667A21.333 21.333 0 0 1 320 768h-42.667A21.333 21.333 0 0 1 256 746.667V277.333A21.333 21.333 0 0 1 277.333 256H320a21.333 21.333 0 0 1 21.333 21.333zM768 280.32a32.853 32.853 0 0 0-15.787-27.733l-5.12-2.56a31.147 31.147 0 0 0-34.133 0L398.507 472.32a32 32 0 0 0-13.654 26.027V524.8a32 32 0 0 0 13.654 26.027L712.96 771.84a31.147 31.147 0 0 0 34.133 0l5.12-2.56A32.427 32.427 0 0 0 768 741.547z'/%3E%3C/svg%3E");
@@ -220,7 +218,9 @@ const modeChange = ()=>{
                 --ui-audio-icon-swap: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M298.667 810.667a170.667 170.667 0 0 1 0-341.334h426.666a85.333 85.333 0 0 0 0-170.666H256V384a21.333 21.333 0 0 1-36.267 14.933l-128-128a21.76 21.76 0 0 1 0-30.293l128-128A21.333 21.333 0 0 1 256 128v85.333h469.333a170.667 170.667 0 0 1 0 341.334H298.667a85.333 85.333 0 0 0 0 170.666H768V640a21.333 21.333 0 0 1 36.267-15.36l128 128a21.76 21.76 0 0 1 0 30.293l-128 128A21.333 21.333 0 0 1 768 896v-85.333z'/%3E%3C/svg%3E");
                 --ui-audio-icon-repeat: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M810.667 533.333v192a85.333 85.333 0 0 1-85.334 85.334H298.667V896a21.333 21.333 0 0 1-36.267 15.36l-128-128a21.76 21.76 0 0 1 0-30.293l128-128A21.333 21.333 0 0 1 298.667 640v85.333h426.666v-192A21.333 21.333 0 0 1 746.667 512h42.666a21.333 21.333 0 0 1 21.334 21.333zm79.36-292.693l-128-128A21.333 21.333 0 0 0 725.333 128v85.333H298.667a85.333 85.333 0 0 0-85.334 85.334v192A21.333 21.333 0 0 0 234.667 512h42.666a21.333 21.333 0 0 0 21.334-21.333v-192h426.666V384a21.333 21.333 0 0 0 36.267 15.36l128-128a21.76 21.76 0 0 0 .427-30.72z'/%3E%3C/svg%3E");
             } */
-
+input,img{
+  cursor: pointer;
+}
     .container {
         display: grid;
         height: 100px;

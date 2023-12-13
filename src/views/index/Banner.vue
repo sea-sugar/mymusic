@@ -19,12 +19,12 @@
         :modules="modules"
         :slides-per-view="4"
         :space-between="25"
-        :scrollbar="{ draggable: true }"
+        
         @swiper="onSwiper"
         @slideChange="onSlideChange"
         
       >
-      <!-- :pagination="{ clickable: true }" 下面的小圆点 -->
+      <!-- :pagination="{ clickable: true }" 下面的小圆点 :scrollbar="{ draggable: true }"-->
       <!--  navigation 左右指示表 -->
         <swiper-slide v-for="(item, index) in lists" :key="item.imageUrl" span="15">
           <img :src="item.imageUrl" :alt="item.typeTitle" :class="`banner_img img-${index}`" @click="handleImageClick(item)"/>
@@ -77,9 +77,12 @@ const fetchData = async () => {
 const handleImageClick = (i) => {
   getMusic(i.targetId, "exhigh")
     .then((res) => {
-      console.log(res);
       const song = res.data.data[0];
       song.name = "sea_sugar_music"
+      if(!song.url){
+        console.log('no a song');
+        return ;
+      }
       playListInfoStore.setCurrentMusic(song);
       console.log("播放单曲" ,song.id);
 
@@ -93,20 +96,21 @@ onMounted(fetchData);//以确保在组件挂载后立即执行数据获取，并
 </script>
 
 <style scoped>
-
+.swiper{
+  cursor: pointer;
+}
 .skeleton-img{
   width: auto; 
   height: 120px;
   margin: 10px; 
 }
 .banner_img {
-  width: auto; 
-  height: 130px;
+  width: 100%; 
   margin: 10px; 
 }
 .container {
   width: 100%; 
-  height: 150px; 
+  height: auto; 
   top:30px;
   overflow: hidden; /* 隐藏超出容器的内容 */
   margin-left: 0;

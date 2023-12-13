@@ -5,10 +5,10 @@
           <img :src="coverImgUrl" alt="Playlist Cover" class="playlist-cover" />
           <div class="playlist-info">
             <h1 class="playlist-name">{{ name }}</h1>
-            <div class="playlist-creator">
+            <!-- <div class="playlist-creator">
               <el-avatar :src="creator.avatarUrl"></el-avatar>
               <p class="creator-name">{{ creator.nickname }}</p>
-            </div>
+            </div> -->
             <div class="playlist-description" :class="{ collapsed: descriptionCollapsed }">
               <div v-if="!descriptionCollapsed">{{ description }}</div>
               <div v-else>{{ collapsedDescription }}</div>
@@ -16,22 +16,30 @@
                 {{ descriptionToggleText }}
               </div>
             </div>
+            <div class="playlist-tags">
+              <span v-for="tag in tags" :key="tag" class="playlist-tag">{{ tag.name }} : {{ tag.size }}</span>
+            </div>
           </div>
         </div>
-        <div class="playlist-tags">
-          <span v-for="tag in tags" :key="tag" class="playlist-tag">{{ tag }}</span>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+          <div @click="playAll" style="font-size: 25px; font-weight: bold; cursor: pointer;">播放全部</div>
+          <div style="margin-right: 5%;">
+            <el-check-tag :checked="checked=== 1" @change="onChange(1)">精选</el-check-tag>
+            <el-check-tag :checked="checked=== 2" @change="onChange(2)">全部</el-check-tag>
+          </div>
+          
         </div>
-        <div class="playlist-songs">
-          <h2 @click="playAll">播放全部</h2>
+       
+        <div class="playlist-songs" v-if="checked === 1">
           <div class="playlist-songs-container">
             <div class="song-info">
                 <div class="song-name">歌曲名称</div>
-                <div class="song-artist">歌手</div>
+                <div class="song-artist"> </div>
                 <div class="song-album">专辑</div>
                 <div class="song-time">歌曲时长</div>
               </div>
             <div
-              v-for="song in songs"
+              v-for="song in hotsongs "
               :key="song.id"
               class="playlist-song"
               @mouseover="handleMouseOver(song)"
@@ -39,12 +47,38 @@
             >
               <div @click="playThis(song)" class="song-info">
                 <div class="song-name">{{ song.name }}</div>
-                <div class="song-artist">{{ song.ar[0].name }}</div>
+                <div class="song-artist"> </div>
                 <div class="song-album">{{ song.al.name }}</div>
                 <div class="song-time">{{ formattedTime(song.dt) }}</div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="playlist-songs" v-else-if="checked === 2">
+          <div class="playlist-songs-container">
+            <div class="song-info">
+                <div class="song-name">歌曲名称</div>
+                <div class="song-artist"> </div>
+                <div class="song-album">专辑</div>
+                <div class="song-time">歌曲时长</div>
+              </div>
+            <div
+              v-for="song in allsongs "
+              :key="song.id"
+              class="playlist-song"
+              @mouseover="handleMouseOver(song)"
+              @mouseout="handleMouseOut"
+            >
+              <div @click="playThis(song)" class="song-info">
+                <div class="song-name">{{ song.name }}</div>
+                <div class="song-artist"> </div>
+                <div class="song-album">{{ song.al.name }}</div>
+                <div class="song-time">{{ formattedTime(song.dt) }}</div>
+              </div>
+            </div>
+          </div>
+          <el-link :underline="false" @click="loadMoreSongs"  style="left: 50%;">加载更多歌曲</el-link>
         </div>
       </div>
     </el-main>
@@ -53,40 +87,44 @@
   <script setup>
   import { ref, onMounted,computed } from 'vue';
   import { useRoute } from 'vue-router';
-  import { getPlaylistAll, getPlaylistDetail } from "../../apis/http";
+  import { getArtisthotsong , getArtistallsong ,getArtistdetail } from "../../../apis/http";
 
-  import { useplayListInfoStore } from '../../store/index';
+  import { useplayListInfoStore } from '../../../store/index';
   const playListInfoStore = useplayListInfoStore();
 
   const route = useRoute();
-  const playlistId = route.query.id;
-  
+  const artistId = route.query.id;
   const name = ref('');
   const coverImgUrl = ref('');
-  const creator = ref('');
   const description = ref('');
   const collapsedDescription = ref('');
   const descriptionCollapsed = ref(true);
   const tags = ref([]);
-  const songs = ref([]);
-  
+  const hotsongs = ref([]);
+  const allsongs = ref([]);
+  const allsongsnum = ref(0);
+  const allsongsnums = ref(0);
+  const checked = ref(1);
   onMounted(async () => {
     try {
-      // 获取歌单详情
-      const playlistDetailResponse = await getPlaylistDetail(playlistId);
-      const playlistDetail = playlistDetailResponse.data.playlist;
-  
-      name.value = playlistDetail.name;
-      coverImgUrl.value = playlistDetail.coverImgUrl;
-      creator.value = playlistDetail.creator;
-      description.value = playlistDetail.description;
+      // 获取歌手详情
+      const res = await getArtistdetail(artistId);
+      name.value = res.data.data.artist.name;
+      coverImgUrl.value = res.data.data.artist.avatar;
+      description.value = res.data.data.artist.briefDesc;
       collapsedDescription.value = truncateDescription(description.value, 100); 
+      tags.value.push({name:'单曲数',size:res.data.data.artist.musicSize});
+      tags.value.push({name:'专辑数',size:res.data.data.artist.albumSize});
+      tags.value.push({name:'MV数',size:res.data.data.artist.mvSize});
   
-      tags.value = playlistDetail.tags;
-  
-      // 获取歌单全部歌曲
-      const playlistSongsResponse = await getPlaylistAll(playlistId, 30, 1);
-      songs.value = playlistSongsResponse.data.songs;
+      // 获取精选的热门歌曲
+      const resp= await getArtisthotsong(artistId);
+      hotsongs.value = resp.data.songs;
+
+      //获取全部歌曲
+      const respo = await getArtistallsong(artistId, 'time', 20 , allsongsnum.value);
+      allsongs.value = respo.data.songs;
+      allsongsnums.value = respo.data.total;
 
     } catch (error) {
       console.error(error);
@@ -113,9 +151,6 @@
   });
   
   const truncateDescription = (text, maxLength) => {
-    if (!text) {
-      return '暂无简介';
-    }
     if (text.length <= maxLength) {
       return text;
     } else {
@@ -142,6 +177,28 @@
     }
     // console.log(playListInfoStore.playList);
   }
+
+// 加载更多歌曲
+const loadMoreSongs = async () => {
+  try {
+    if(allsongsnum.value>=allsongsnums.value){
+      //加载完了
+      return ;
+    }
+    allsongsnum.value += 20 ;
+    // 获取更多歌曲
+    const resp = await getArtistallsong(artistId, 'time', 20,allsongsnum.value);
+    allsongs.value = [...allsongs.value, ...resp.data.songs];
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const onChange = (i) =>{
+  checked.value= i;
+} 
+
   </script>
   
   <style scoped>
@@ -205,6 +262,7 @@
   }
   
   .playlist-tags {
+    margin-top: 20px;
     margin-bottom: 20px;
   }
   

@@ -5,7 +5,7 @@
         <el-row :gutter="10">
           <el-col v-for="item in lists" :key="item.id" :span="12">
             <div class="image-item">
-              <div class="image-content">
+              <div class="image-content" @click="goToPlayMV(item)">
                 <img :src="item.picUrl" :alt="item.name" />
                 <div class="text">
                   <div class="name">{{ item.name }}</div>
@@ -22,7 +22,7 @@
 <script setup>
 import { ref,onMounted } from "vue";
 import { getMV } from "../../apis/http";
-
+import router from '../../router/index'
 const lists = ref([]);
 
 const fetchData = async () =>{
@@ -35,6 +35,10 @@ const fetchData = async () =>{
     }
 }
 
+const goToPlayMV = (item) =>{
+  router.push(`/playMV?id=${item.id}`)
+}
+
 onMounted(fetchData);
 </script>
 
@@ -42,7 +46,7 @@ onMounted(fetchData);
 <style scoped>
 .container {
   overflow: hidden;
-  width: auto;
+  width: 100%;
   height: auto;
 }
 
@@ -56,6 +60,7 @@ onMounted(fetchData);
 }
 
 .image-item {
+  cursor: pointer;
   width: auto;
   height: auto;
   margin-right: 10px;

@@ -61,7 +61,7 @@ const handleImageClick = (item) => {
 <style scoped>
 .container {
   overflow: hidden;
-  width:  auto;
+  width:  100%;
   height: auto;
 }
 
@@ -75,8 +75,8 @@ const handleImageClick = (item) => {
 }
 
 .image-item {
-  width: 250px; /* 调整图片项的宽度，以容纳图片和文本 */
-  height: auto;
+  cursor: pointer;
+  width: 100%; /* 调整图片项的宽度，以容纳图片和文本 */
   margin-right: 30px;
   margin-left: 10px;
   margin-bottom: 10px;
@@ -93,7 +93,7 @@ const handleImageClick = (item) => {
 }
 
 .image-item img {
-  width: 80px; /* 图片宽度占满父容器 */
+  width: 38%; /* 图片宽度占满父容器 */
   height: auto;
 }
 

@@ -1,10 +1,10 @@
 <template>
-    <h1>你的专属歌单</h1>
+    <h1>推荐电台</h1>
     <div class="container">
       <el-row :gutter="10" justify="space-between">
-          <el-col v-for="(item, index) in lists.slice(0, 12)" :key="item.imageUrl" :span="2">
+          <el-col v-for="(item, index) in lists.slice(0, 6)" :key="item.id" :span="4">
             <div class="image-item">
-              <img :src="item.picUrl" :alt="item.name" @click="goToPlaylist(item.id)"/>
+              <img :src="item.picUrl" :alt="item.name" @click="goToPlaylist(item)"/>
               <div class="name">{{ item.name }}</div>
             </div>
           </el-col>
@@ -14,22 +14,22 @@
   
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getPersonalized } from '../../apis/http';
-import router from '../../router/index'
+import { getDjRecommend } from '../../../apis/http';
+import router from '../../../router/index'
 
 const lists = ref([]);
 
 const fetchData = async () => {
   try {
-    const response = await getPersonalized();
-    lists.value = response.data.result;
+    const response = await getDjRecommend();
+    lists.value = response.data.djRadios;
   } catch (error) {
     console.error('Error fetching lists:', error);
   }
 };
 
 const goToPlaylist = (playlistId) => {
-  router.push(`/playlist?id=${playlistId}`);
+  console.log('点击了');
 };
 
 onMounted(fetchData);
