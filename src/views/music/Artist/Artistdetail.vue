@@ -168,15 +168,17 @@
     console.log("播放单曲" ,song.id , song.name);
   }
   
-  const playAll = () =>{
-    playListInfoStore.setCurrentMusic(songs.value[0]);
-    console.log("播放歌单:",name.value,"的全部歌曲囖");
-    for (let index = 0; index < songs.value.length; index++) {
-      playListInfoStore.addPlayListBack(songs.value[index]);
-      // console.log("index is",index,songs.value[index]);
-    }
-    // console.log(playListInfoStore.playList);
-  }
+  const playAll = async () => {  
+    // playListInfoStore.setCurrentMusic(songs.value[0]);  
+    console.log("播放歌单:", name.value, "的全部歌曲囖");  
+      
+    const promises = songs.value.map(song => {  
+        return playListInfoStore.addPlayListBack(song);  
+    });  
+    await Promise.all(promises);  
+    console.log("All songs added to playlist.");  
+    //map 函数被用来创建一个包含每个歌曲对应的 Promise 的数组。然后，Promise.all 被用来等待所有的 Promise 都完成。这样就可以确保所有的歌曲都按照歌单的顺序添加到播放列表中。
+}
 
 // 加载更多歌曲
 const loadMoreSongs = async () => {

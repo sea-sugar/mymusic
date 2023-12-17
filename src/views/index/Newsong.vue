@@ -52,7 +52,7 @@ onMounted(fetchData);
 
 // newsong点击事件
 const handleImageClick = (item) => {
-  console.log(item.song);
+  // console.log(item.song);
   playListInfoStore.setCurrentMusic(item.song);
   console.log("播放单曲" ,item.song.id , item.song.name);
 };
@@ -85,8 +85,39 @@ const handleImageClick = (item) => {
 }
 .image-item:hover{
   background-color: #cac6c6;
+  animation: jelly-jump 1.2s ease 1;
+ 
 }
-
+/* 果冻效果 */
+@keyframes jelly-jump {  
+    0% {
+        transform: translate(0);
+    }
+    10% {
+        transform: translateY(5px) scale(1.2) scaleY(0.8);
+    }
+    30% {
+        transform: translateY(-13px) scale(1) scaleY(1) rotate(5deg);
+    }
+    50% {
+        transform: translateY(0) scale(1) rotate(0);
+    }
+    55% {
+        transform: translateY(0) scaleX(1.1) scaleY(0.9) rotate(0);
+    }
+    70% {
+        transform: translateY(-4px) scaleX(1) scaleY(1) rotate(0);
+    }
+    80% {
+        transform: translateY(0) scaleX(1) scaleY(1) rotate(0);
+    }
+    85% {
+        transform: translateY(0) scaleX(1.05) scaleY(0.95) rotate(0);
+    }
+    to {
+        transform: translateY(0) scaleX(1) scaleY(1);
+    }
+}
 .image-content {
   display: flex;
   align-items: flex-start;

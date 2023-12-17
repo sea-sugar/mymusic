@@ -2,7 +2,7 @@
     <h1>官方榜</h1>
     <div class="container">
       <div class="detail" v-for="(list, index) in lists.slice(0, 4)" :key="list.id" @click="goToPlaylist(list)">
-        <img :src="list.coverImgUrl" alt="">
+        <img :src="list.coverImgUrl" alt="" class="hvr-float-shadow">
         <div class="text">
           <div class="name">{{ list.name }}</div>
           <div class="list" v-if="isfetch && index <= 3" v-for="(t, i) in top3[index]" :key="i">
@@ -14,7 +14,7 @@
     <h1>特色榜</h1>
     <div class="ordercontainer">
       <div class="order" v-for="(list, index) in lists.slice(4)" :key="list.id" @click="goToPlaylist(list)">
-        <img :src="list.coverImgUrl" alt="">
+        <img :src="list.coverImgUrl" alt="" class="hvr-float-shadow">
         <div class="ordername">{{ list.name }}</div>
       </div>
     </div>
@@ -53,33 +53,41 @@
   </script>
   
   <style scoped>
+
   .container {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     justify-content: space-between;
+    
   }
   
   .detail {
     display: flex;
     width: 23%;
     margin-bottom: 20px;
+    border-radius: 25px;
   }
   .detail:hover{
     cursor: pointer;
+
   }
   
   .text {
     width: 100%;
-    background-color: #c9c3c3;
+    background-color: #dddddd;
     flex-direction: column;
     display: flex;
     overflow: hidden;
+    border-radius: 5%;
+
   }
   
   .detail img {
     width: 40%;
     height: 40%;
+    border-radius: 10%;
+    
   }
   
   .name {
@@ -121,14 +129,17 @@
     }
     .order:hover{
         cursor: pointer;
+
     }
   .order img {
     width: 100%;
     height: auto;
+    border-radius: 5%;
+
     }
 
     .ordername {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     margin-top: 10px;
     text-align: center;
@@ -139,4 +150,48 @@
   h1 {
     margin-bottom: 20px;
   }
+  
+/* Float Shadow */
+.hvr-float-shadow {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: perspective(1px) translateZ(0);
+  transform: perspective(1px) translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  position: relative;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+}
+.hvr-float-shadow:before {
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+  content: '';
+  top: 100%;
+  left: 5%;
+  height: 10px;
+  width: 90%;
+  opacity: 0;
+  background: -webkit-radial-gradient(center, ellipse, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 80%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 80%);
+  /* W3C */
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: transform, opacity;
+  transition-property: transform, opacity;
+}
+.hvr-float-shadow:hover, .hvr-float-shadow:focus, .hvr-float-shadow:active {
+  -webkit-transform: translateY(-5px);
+  transform: translateY(-5px);
+  /* move the element up by 5px */
+}
+.hvr-float-shadow:hover:before, .hvr-float-shadow:focus:before, .hvr-float-shadow:active:before {
+  opacity: 1;
+  -webkit-transform: translateY(5px);
+  transform: translateY(5px);
+  /* move the element down by 5px (it will stay in place because it's attached to the element that also moves up 5px) */
+}
+
 </style>

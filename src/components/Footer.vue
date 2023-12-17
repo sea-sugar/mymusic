@@ -17,19 +17,46 @@
           <input class="volume-range" type="range" v-model="volume" min="0" step="0.01" max="1" @input="handleVolumeChange">
         </div>
         <img :src="cmode" :title="cmodetitle" @click="modeChange">
-        <img src="/more.svg" title="更多">   
+        <img src="/more.svg" title="更多" @click="drawer = true" >   
         
       </div>
       <audio ref="audioElement"  @timeupdate="updateProgress" @ended="next"  >
         <source :src="playListInfoStore.playList[currentAudioIndex]" type="audio/mp3">
       </audio>
     </div>
-  </template>
+
+    <el-drawer v-model="drawer" title="播放列表" :with-header="false" stripe >
+      <span>播放列表</span>
+      <el-table :data="playListInfoStore.playList">
+        <el-table-column property="name" label="歌名"  />
+        <el-table-column property="ar[0].name" label="歌手" />
+        <!-- <el-table-column property="dt" label="时长" /> -->
+        <el-table-column fixed="right" label="是否移除该歌曲">
+        <template #default="scope">
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click.prevent="deleteRow(scope.$index)"
+            >
+              移除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+
+    </el-drawer>
+
+
+</template>
+
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useplayListInfoStore } from '../store/index';
+import { formatTime } from "../utils/util";
 const playListInfoStore = useplayListInfoStore();
-
+const drawer = ref(false);
 const audioElement = ref(null);
 const label = ref('Sea-Sugar Player');
 const currentTime = ref(0);
@@ -97,17 +124,6 @@ const next = () => {
   }
   playListInfoStore.addhistoryList(playListInfoStore.playList[currentAudioIndex])
   
-};
-
-// 格式化时间（将秒数转换为分:秒格式）
-const formatTime = (time) => {
-  if(!time){
-    return '00:00';
-  }
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-  return `${minutes}:${seconds}`;
-
 };
 
 // 更新播放进度
@@ -200,6 +216,11 @@ const cmodetitle = computed(()=>{
 const modeChange = ()=>{
   mode.value = (mode.value + 1) % 3 ;
 }
+
+const deleteRow = (index) => {
+  playListInfoStore.playList.splice(index, 1)
+}
+
 </script>
 
 

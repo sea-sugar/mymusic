@@ -14,7 +14,6 @@ const routes = [
         {path: 'category', name: '/music/category', component: () => import('../views/music/Category/Category.vue')},
     ]},
     { path: '/video', name: 'video', component: () => import('../views/vedio/Index.vue')},
-    { path: '/dj', name: 'dj', component: () => import('../views/dj/Index.vue')},
     { path: '/playlist', name: 'playlist', component: () => import('../views/index/Playlist.vue')},
     { path: '/lastplay', name: 'lastplay', component: () => import('../views/lastplay/Index.vue')},
     { path: '/playMV', name: 'playMV', component: () => import('../views/index/playMV.vue')},

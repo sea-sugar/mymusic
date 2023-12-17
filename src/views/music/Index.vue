@@ -2,23 +2,32 @@
   <el-main>
     <!-- 音乐馆 -->
     <div class="header">
-      <div
-        class="header-item "
-        v-for="item in Headerlist"
-        :key="item.title"
+      <el-menu
+        ellipsis
+        class="el-menu-popper-demo"
+        mode="horizontal"
+        :popper-offset="16"
+        style="width: 40%"
+        router
       >
-      <el-check-tag :checked="$route.path === item.url" ><router-link :to="item.url" >{{ item.title }}</router-link></el-check-tag>
-        
-      </div>
+        <el-menu-item index="picked">精选</el-menu-item>
+        <el-menu-item index="toplist">排行</el-menu-item>
+        <el-menu-item index="artist">歌手</el-menu-item>
+        <el-menu-item index="category">分类歌单</el-menu-item>
+      </el-menu>
     </div>
     <el-main class="container">
-      <router-view></router-view>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
+      
     </el-main>
+
   </el-main>
 </template>
 
 <script setup>
-const Headerlist = [{ title: '精选', url: '/music/picked' },{ title: '排行', url: '/music/toplist' },{ title: '歌手', url: '/music/artist' },{ title: '分类歌单', url: '/music/category' }];
+
 
 </script>
 

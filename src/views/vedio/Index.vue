@@ -2,11 +2,11 @@
     <el-main>   
         <el-popover
         placement="top-start"
-        title="Title"
+        title="全部视频"
         width="70%"
         height="30%"
         trigger="hover"
-        content="this is content, this is content, this is content"
+        content="加载中"
       >
         <el-check-tag :checked="tag === t.name" @change="onChange(t.id)" v-for="(t,index) in vediotags " >{{ t.name }}</el-check-tag>
         <template #reference>
@@ -69,6 +69,7 @@ onMounted(fetchData);
 
 <style scoped>
 .container {
+  margin-top: 2%;
   overflow: hidden;
   width: 100%;
   height: auto;

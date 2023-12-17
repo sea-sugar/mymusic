@@ -1,13 +1,14 @@
 <template>
     <div class="container">
         <div class="tag-group">
-            <div class="tag" v-for="(item, index) in typelist" :key="index" @click="selectType(item.id)">{{ item.name }}</div>
+          分类：<div class="tag" v-for="(item, index) in typelist" :key="index" @click="selectType(item.id)" :class="{ 'selected': item.id === type }">{{ item.name }}</div>
         </div>
         <div class="tag-group">
-            <div class="tag" v-for="(item, index) in arealist" :key="index" @click="selectArea(item.id)">{{ item.name }}</div>
+          语种：<div class="tag" v-for="(item, index) in arealist" :key="index" @click="selectArea(item.id)" :class="{ 'selected': item.id === area }">{{ item.name }}</div>
         </div>
         <div class="tag-group">
-            <div class="tag" v-for="(item, index) in initiallist" :key="index" @click="selectInitial(item)">{{ item }}</div>
+          筛选：<div class="tag" @click="selectInitial(initiallist[0])" :class="{ 'selected': '-1' === initial }">{{initiallist[0]}}</div>
+                <div class="tag" v-for="(item, index) in initiallist.slice(1)" :key="index" @click="selectInitial(item)" :class="{ 'selected': item === initial }">{{ item }}</div>
         </div>
 
         <div class="display-container"> 
@@ -53,29 +54,32 @@ const fetchData = async () => {
 onMounted(fetchData);
 
 watch((type), (newone,oldone) => {
+  artists.value=[];
   type.value = newone;
-  console.log(type.value,area.value,initial.value);
+  // console.log(type.value,area.value,initial.value);
   fetchData();
 });
 watch((area), (newone,oldone) => {
-    area.value = newone;
-  console.log(type.value,area.value,initial.value);
+  artists.value=[];
+  area.value = newone;
+  // console.log(type.value,area.value,initial.value);
   fetchData();
 });
 watch((initial), (newone,oldone) => {
-    initial.value = newone;
-  console.log(type.value,area.value,initial.value);
+  artists.value=[];
+  initial.value = newone;
+  // console.log(type.value,area.value,initial.value);
   fetchData();
 });
 
 const selectType = (selectedType) => {
   type.value = selectedType;
-  console.log(type.value,area.value,initial.value);
+  // console.log(type.value,area.value,initial.value);
 }
 
 const selectArea = (selectedArea) => {
   area.value = selectedArea;
-  console.log(type.value,area.value,initial.value);
+  // console.log(type.value,area.value,initial.value);
 }
 
 const selectInitial = (selectedInitial) => {
@@ -85,7 +89,7 @@ const selectInitial = (selectedInitial) => {
     else{
         initial.value = selectedInitial;
     }
-    console.log(type.value,area.value,initial.value);
+    // console.log(type.value,area.value,initial.value);
 }
 
 const goToArtistdetail = (item) => {
@@ -102,9 +106,11 @@ const goToArtistdetail = (item) => {
 }
 
 .tag-group {
+  font-size: 12px;
   display: flex;
   justify-content:left;
   margin-bottom: 10px;
+  align-items: center;
 }
 
 .tag {
@@ -142,8 +148,14 @@ const goToArtistdetail = (item) => {
   height: auto;
   border-radius: 50%;
 }
-
+img:hover{
+  transform: scale(1.1);
+}
 .artist-name {
   margin-top: 10px;
+}
+.tag.selected {
+  background-color: yellow;
+  font-weight: bold;
 }
 </style>

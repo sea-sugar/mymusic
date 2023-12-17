@@ -82,6 +82,36 @@ const loadMore = async ()=>{
 </script>
 
 <style scoped>
+/* 果冻效果 */
+@keyframes jelly-jump {  
+    0% {
+        transform: translate(0);
+    }
+    10% {
+        transform: translateY(5px) scale(1.2) scaleY(0.8);
+    }
+    30% {
+        transform: translateY(-13px) scale(1) scaleY(1) rotate(5deg);
+    }
+    50% {
+        transform: translateY(0) scale(1) rotate(0);
+    }
+    55% {
+        transform: translateY(0) scaleX(1.1) scaleY(0.9) rotate(0);
+    }
+    70% {
+        transform: translateY(-4px) scaleX(1) scaleY(1) rotate(0);
+    }
+    80% {
+        transform: translateY(0) scaleX(1) scaleY(1) rotate(0);
+    }
+    85% {
+        transform: translateY(0) scaleX(1.05) scaleY(0.95) rotate(0);
+    }
+    to {
+        transform: translateY(0) scaleX(1) scaleY(1);
+    }
+}
 .container {
   justify-content: center;
   margin-bottom: 20px;
@@ -108,7 +138,10 @@ const loadMore = async ()=>{
   text-align: center;
   margin-right: 2%;
 }
-
+.display-artists:hover{
+  animation: jelly-jump 1.2s ease 1;
+  filter: brightness(75%);
+}
 .artist-image img {
   width: 100%;
   height: auto;
@@ -117,6 +150,6 @@ const loadMore = async ()=>{
 
 .artist-name {
   margin-top: 10px;
-  font-size: 12px;
+  font-size: 11px;
 }
 </style>

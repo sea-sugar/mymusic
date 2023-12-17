@@ -21,6 +21,15 @@ const getMusic = (id,level) =>{ return instance.get('/song/url/v1', { params: {
   }}
 )}
 
+// 获取歌曲详情 /song/detail?ids=347230
+const getSongDeatil = (ids)=>{
+  return instance.get('/song/detail', {
+    params: {
+      ids: ids
+    }
+  });
+}
+
 //获取歌单详情  /playlist/detail?id=24381616
 const getPlaylistDetail = (id) => {
   return instance.get('/playlist/detail', {
@@ -286,6 +295,7 @@ export {
     getNewsong,
     getMV,
     getMusic,
+    getSongDeatil,
     getPlaylistDetail,
     getPlaylistAll,
     getMVDetail,

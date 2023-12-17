@@ -1,15 +1,13 @@
 <template>
-    <p>home</p>
     <div class="container" v-if="userInfoStore.isLogin">
-        我的歌单
-        <el-row :gutter="10" justify="space-between">
-          <el-col v-for="(item, index) in lists" :key="item.id" :span="2">
-            <div class="image-item">
-              <img :src="item.coverImgUrl" :alt="item.name" @click="goToPlaylist(item.id)"/>
-              <div class="name">{{ item.name }}</div>
-            </div>
-          </el-col>
-      </el-row>
+        <h1>我的歌单</h1>
+        <div class="playlist">
+          <div class="image-item" v-for="(item, index) in lists" :key="item.id">
+            <img :src="item.coverImgUrl" :alt="item.name" @click="goToPlaylist(item.id)"/>
+            <div class="name">{{ item.name }}</div>
+          </div>
+        </div>
+        
 
     </div>
     <div class="container" v-else>
@@ -51,36 +49,85 @@ onMounted(fetchData);
 </script>
 
 <style scoped>
+
+/* 果冻效果 */
+@keyframes jelly-jump {  
+    0% {
+        transform: translate(0);
+    }
+    10% {
+        transform: translateY(5px) scale(1.2) scaleY(0.8);
+    }
+    30% {
+        transform: translateY(-13px) scale(1) scaleY(1) rotate(5deg);
+    }
+    50% {
+        transform: translateY(0) scale(1) rotate(0);
+    }
+    55% {
+        transform: translateY(0) scaleX(1.1) scaleY(0.9) rotate(0);
+    }
+    70% {
+        transform: translateY(-4px) scaleX(1) scaleY(1) rotate(0);
+    }
+    80% {
+        transform: translateY(0) scaleX(1) scaleY(1) rotate(0);
+    }
+    85% {
+        transform: translateY(0) scaleX(1.05) scaleY(0.95) rotate(0);
+    }
+    to {
+        transform: translateY(0) scaleX(1) scaleY(1);
+    }
+}
 .container {
-  max-width: 100%;
-  overflow: hidden;
-  justify-content: space-between;
+  margin: 20px auto;
+  text-align: center;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.playlist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 20px;
 }
 
 .image-item {
+  position: relative;
   cursor: pointer;
-  width: 100%; 
-  margin-right: 10px;
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column; 
-  align-items: center; 
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.image-item:hover {
+  transform: translateY(-5px);
+  animation: jelly-jump 1.2s ease 1;
 }
 
 .image-item img {
   width: 100%;
   height: auto;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
 }
 
 .name {
-  text-align: center; /* 居中显示名称 */
-  margin-top: 5px; /* 调整名称与图片的间距 */
-  font-size:11px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 8px;
+  font-size: 12px;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.7);
+  text-align: center;
 }
-.image-item img:hover{
-  filter: brightness(75%);
-}
-.image-item:hover{
-  font-weight: bold;
-}
+
+
 </style>

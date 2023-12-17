@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
-import { getMusic } from '../apis/http';
+import { getMusic , getSongDeatil } from '../apis/http';
 export const useplayListInfoStore = defineStore('playListInfoStore', {
     state: () => {
         return {
             isPlaying: false,   // 当前是否播放歌曲
-            currentMusic:{}, //当前歌曲信息
+            currentMusic: null, //当前歌曲信息
             playList:[],//正在播放列表
             historyList:[],//播放历史列表
         }
@@ -21,18 +21,27 @@ export const useplayListInfoStore = defineStore('playListInfoStore', {
         },
         //设置当前播放音乐
         async setCurrentMusic(music) {
-            // await this.addPlayListFront(music);
-            // console.log("当前播放音乐：",music.name,music.id,music.url);
-            getMusic(music.id, "exhigh")
-            .then(response => {
-              const url = response.data.data[0].url; 
-              this.currentMusic = music;
-              this.currentMusic.url = url;
-              console.log("当前播放音乐：",music.name,music.id,music.url);
-            })
-            .catch(error => {
-              console.error("Error fetching music:", error);
-            });
+            try {
+                console.log("开始设置当前播放音乐", this.playList);
+                const [detailResponse, urlResponse] = await Promise.all([
+                  getSongDeatil(music.id),
+                  getMusic(music.id, "higher")
+                ]);
+                const newMusic = { ...detailResponse.data.songs[0] }; 
+                const url = urlResponse.data.data[0].url;
+                newMusic.url = url;
+                this.playList.unshift(newMusic);
+                this.currentMusic = newMusic;
+                this.playList.shift();
+
+            } catch (error) {
+                console.error("Error fetching music:", error);
+            }
+            console.log("111",this.playList[0]);
+            console.log("222",this.currentMusic);
+            console.log("333",this.playList);
+
+            
         },
         // 添加音乐到历史播放
         addhistoryList(song){
@@ -42,7 +51,7 @@ export const useplayListInfoStore = defineStore('playListInfoStore', {
         // 添加音乐到当前播放 放最后一个
         async addPlayListBack(song) {
             try {
-              const response = await getMusic(song.id, "exhigh");
+              const response = await getMusic(song.id, "higher");
               const url = response.data.data[0].url;
               this.playList.push(song);
               this.playList[this.playList.length - 1].url = url;
@@ -54,7 +63,7 @@ export const useplayListInfoStore = defineStore('playListInfoStore', {
         // 添加音乐到当前播放 放第一个
         async addPlayListFront(song) {
             try {
-              const response = await getMusic(song.id, "exhigh");
+              const response = await getMusic(song.id, "higher");
               const url = response.data.data[0].url;
               this.playList.unshift(song);
               this.playList[0].url = url;

@@ -25,10 +25,6 @@
           <span>视频</span>
         </el-menu-item>
 
-        <el-menu-item index="/dj">
-          <span>电台</span>
-        </el-menu-item>
-
         <el-menu-item index="/home">
           <span>我的音乐</span>
         </el-menu-item>

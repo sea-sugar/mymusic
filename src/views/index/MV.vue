@@ -109,6 +109,7 @@ onMounted(fetchData);
 
 .image-item img:hover {
   filter: brightness(50%);
+  
 }
 
 .name:hover {
