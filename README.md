@@ -4,9 +4,10 @@
 
 该项目使用网易云API接口，[网易云音乐 NodeJS 版 API (binaryify.com)](https://docs.neteasecloudmusicapi.binaryify.com/#/)，
 
-![image](https://github.com/sea-sugar/mymusic/tree/main/img/index.jpg)
-![image](https://github.com/sea-sugar/mymusic/tree/main/img/like.jpg)
-![image](https://github.com/sea-sugar/mymusic/tree/main/img/ljj.jpg)
+![image](https://github.com/sea-sugar/mymusic/blob/main/img/index.png)
+![image](https://github.com/sea-sugar/mymusic/blob/main/img/like.png)
+![image](https://github.com/sea-sugar/mymusic/blob/main/img/ljj.png)
+
 
 ##### RUN
 
