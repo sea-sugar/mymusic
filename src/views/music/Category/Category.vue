@@ -2,9 +2,8 @@
     <!-- Category.vue 歌单分类 -->
     <div class="container">
         <div class="tag-group">
-            <el-check-tag v-for="(item, index) in taglist" :key="index" :checked="tag === item.name" @change="onChange(item.name)" >{{ item.name }}</el-check-tag>
+          <el-check-tag v-for="(item, index) in taglist" :key="index" :checked="tag === item.name" @change="onChange(item.name)" class="check-tag" >{{ item.name }}</el-check-tag>
         </div>
-
         <div class="display-container"> 
             <div class="display-artists" v-for="(item, index) in categorizeplaylist" :key="item.id" @click="goToPlaylist(item.id)">
                 <div class="artist-image">
@@ -152,4 +151,14 @@ const loadMore = async ()=>{
   margin-top: 10px;
   font-size: 11px;
 }
+
+.check-tag{
+  background-color: #fff;
+}
+
+.check-tag:hover{
+  background-color: #f3f3f3;
+}
+
+
 </style>

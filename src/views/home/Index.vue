@@ -11,7 +11,7 @@
 
     </div>
     <div class="container" v-else>
-        请先登录
+        请先点击右上角登录
     </div>
 </template>
 

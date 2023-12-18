@@ -1,5 +1,8 @@
 <template>
-    <h1>独家放送</h1>
+    <div style="display: flex; align-items: center;">
+      <h1 style="font-size: 20px;">独家放送</h1>
+      <svg t="1702897850207" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14512" width="35" height="35"><path d="M644.266667 494.933333l-192 192-29.866667-29.866666 162.133333-162.133334-162.133333-162.133333 29.866667-29.866667 192 192z" fill="#2c2c2c" p-id="14513"></path></svg>
+    </div>
     <div class="container">
       <el-skeleton :loading="loading" animated>
         <template #template> 
@@ -29,8 +32,7 @@
       </el-skeleton>
     </div>
   </template>
-  <!-- 待解决 -->
-  <!-- 图片的显示数量将根据页面宽度自适应调整，并始终显示在一行内，不会超出容器宽度 -->
+
   <script setup>
   
   // 使用swiper
@@ -86,6 +88,7 @@
   .banner_img {
     width: 100%; 
     margin: 10px; 
+    border-radius: 10px;
   }
   .container {
     width: 100%; 

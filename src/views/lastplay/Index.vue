@@ -3,10 +3,10 @@
         <h2 >最近播放</h2>
         <div class="playlist-songs-container">
             <div class="song-info">
-                <div class="song-name">歌曲名称</div>
-                <div class="song-artist">歌手</div>
-                <div class="song-album">专辑</div>
-                <div class="song-time">歌曲时长</div>
+                <div class="song-name" style="color:darkgray">歌曲名称</div>
+                <div class="song-artist" style="color:darkgray">歌手</div>
+                <div class="song-album" style="color:darkgray">专辑</div>
+                <div class="song-time" style="color:darkgray">歌曲时长</div>
             </div>
           <div
           v-for="song in playListInfoStore.historyList"
@@ -58,13 +58,21 @@ const formattedTime = (duration) => {
     display: flex;
     justify-content: space-between;
 
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 13px;
     margin-bottom: 5px;
 
   }
-  .song-info div{
+  .song-name{
+    width:30%;
+  }
+  .song-artist{
     width:20%;
+  }
+  .song-album{
+    width:30%;
+  }
+  .song-time{
+    width:10%;
   }
   .playlist-song:hover {
     background-color: #f5f7fa;

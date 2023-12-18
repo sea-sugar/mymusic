@@ -11,6 +11,8 @@
         :width="300"
         trigger="click"
         content="暂无搜索建议"
+        
+        
       >
 
       <div class="searchlist" v-for="(item,index) in searchHotlist" :key="index" v-if="!isSuggest" @click="handleSelectHot(item)">{{item.first}}</div>
@@ -24,7 +26,7 @@
       <div class="searchlist" v-for="(item,index) in searchSuggestplaylist" :key="index" v-if="isSuggest" @click="handleSelectplaylist(item)">{{item.name}} <div style="margin-left: auto; font-size: 12px;">——歌单</div></div>
 
         <template #reference>
-          <el-input class="search-input" v-model="searchWord" @keyup.enter="search" placeholder="请输入歌名、歌词、歌手或专辑" clearable></el-input>
+          <el-input class="search-input" v-model="searchWord" @keyup.enter="search" placeholder="请输入歌名、歌词、歌手或专辑" clearable ></el-input>
         </template>
       </el-popover>
 
@@ -33,24 +35,28 @@
       </div>
     <!-- 用户框 -->
     <div class="user-info">
-      <div v-if="userInfoStore.isLogin">
+      <div v-if="userInfoStore.isLogin" style=" display: flex; margin-right: 30px;">
         <!-- 用户信息展示 -->
         <!-- <el-avatar :src="userInfoStore.userInfo.avatarUrl" ></el-avatar>
         <span style="font-size: 14px;">{{userInfoStore.userInfo.nickname}}</span> -->
-
+        <div class="github">
+          <el-avatar src="/GitHub.svg" alt="GitHub for sea-sugar" @click="openGitHubLink"></el-avatar>
+        </div>
         <el-popover
           placement="top-start"
           title="用户信息"
-          width="20%"
+          width="12%"
           height="50%"
           trigger="hover"
           content="UserInfo"
         >
-        
-          <div >生日:{{ timestampToTime(userInfoStore.userInfo.birthday) }}</div>
-          <!-- <div >个性签名:{{ userInfoStore.userInfo.signature }}</div> -->
-          <div >上次登录ip:{{ userInfoStore.userInfo.lastLoginIP}}</div>
-          <div >上次登录时间:{{ timestampToTime(userInfoStore.userInfo.lastLoginTime)}}</div>
+          <div style= " justify-items: center ;">
+            <div >生日:{{ timestampToTime(userInfoStore.userInfo.birthday) }}</div>
+            <!-- <div >个性签名:{{ userInfoStore.userInfo.signature }}</div> -->
+            <div >上次登录ip:{{ userInfoStore.userInfo.lastLoginIP}}</div>
+            <div >上次登录时间:{{ timestampToTime(userInfoStore.userInfo.lastLoginTime)}}</div>
+          </div>
+          
           <el-divider><el-icon><star-filled /></el-icon></el-divider>
           <div @click="out" class="icon"><el-icon  size="20px" ><Promotion /></el-icon><span>退出登录</span></div> 
           <template #reference>
@@ -72,7 +78,7 @@
   <el-dialog v-model="showLogin" title="登录" width="30%" draggable>
     <div class="block">
       <div class="demonstration">使用 网易云音乐APP 扫码登录</div>
-      <el-image :src="qrurl">
+      <el-image :src="qrurl" @click="Refresh" title="点击刷新" class="qr">
         <template #error>
           <div class="image-slot">
             <el-icon size="100" color="#A8ABB2" ><icon-picture/></el-icon>
@@ -100,6 +106,7 @@ import { getCheck,getQr,getKey,getLoginstatus,getAccount,logout,searchHot,search
 import { useuserInfoStore } from "../store/index";
 import { Picture as IconPicture ,Avatar} from '@element-plus/icons-vue'
 import router from '../router/index'
+import { ElNotification } from 'element-plus'
 import { useplayListInfoStore } from '../store/index';
 const playListInfoStore = useplayListInfoStore()
 const userInfoStore = useuserInfoStore();
@@ -119,6 +126,13 @@ const loginHandler = ()=>{
   //打开弹出框
   showLogin.value = true;
   login();
+}
+
+const loginsuccess = () => {
+  ElNotification({
+    message: '登录成功',
+    type: 'success',
+  })
 }
 
 const login = async () => {
@@ -150,7 +164,7 @@ const login = async () => {
     else if(res.data.code === 803 ){ //803 为授权登录成功,会返回 cookies
       console.info(res.data.message);
       msg.value = '登录成功';
-      
+      loginsuccess();
       console.log('登录成功的返回的res',res);
       clearInterval(check);
       const resp = await getAccount(res.data.cookie);
@@ -227,12 +241,22 @@ const timestampToTime = (timestamp) => {
     let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
     return Y + M + D ;
 }
+
+
+const logoutsuccess = () => {
+  ElNotification({
+    message: '账号退出成功',
+    type: 'success',
+  })
+}
+
 const out = async ()=>{
   const res = await logout();
   console.log(res);
   window.localStorage.clear();//清空所有的存储数据
   userInfoStore.isLogin = false;
   userInfoStore.userInfo = null;
+  logoutsuccess()
 }
 
 watch(searchWord, (newword) => {
@@ -313,7 +337,14 @@ const handleSelectsong = (item) =>{
 const search = () =>{
   console.log("好好好你搜索了，但是我没有写！");
 }
+const Refresh = async()=>{
+  qrtime.value = 0;
+  login();
+}
 
+const openGitHubLink = ()=>{
+  window.open('https://github.com/sea-sugar/mymusic', '_blank'); // 替换为您想要跳转的链接  
+}
 
 </script>
 
@@ -398,6 +429,18 @@ const search = () =>{
 }
 .searchlist:hover{
   background-color: #d8d2d2;
+  cursor: pointer;
+}
+.qr:hover{
+  cursor: pointer;
+}
+
+.github{
+  margin-right: 30px; 
+  align-items: center; 
+  display: flex; 
+}
+.github:hover{
   cursor: pointer;
 }
 </style>

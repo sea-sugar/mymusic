@@ -39,28 +39,32 @@ import Footer from './components/Footer.vue';
 }
 
 .el-header {
-  background-color: #b3c0d1;
+  /* background-color: #c7cfda; */
   color: #333;
   text-align: center;
   line-height: 40px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .el-footer {
-  background-color: #b3c0d1;
+  /* background-color: #b3c0d1; */
   color: #333;
   text-align: center;
   height: 100px;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
 }
 .el-aside {
-  background-color: #d3dce6;
+  /* background-color: #f4f9fc; */
   color: #333;
   text-align: center;
   height: 100%;
   width:200px;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);
 }
 
 .el-main {
-  background-color: #e9eef3;
+  /* background-color: #e9eef3; */
   color: #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 </style>

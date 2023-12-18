@@ -33,10 +33,10 @@
         <div class="playlist-songs" v-if="checked === 1">
           <div class="playlist-songs-container">
             <div class="song-info">
-                <div class="song-name">歌曲名称</div>
-                <div class="song-artist"> </div>
-                <div class="song-album">专辑</div>
-                <div class="song-time">歌曲时长</div>
+              <div class="song-name" style="color:darkgray">歌曲名称</div>
+                <div class="song-artist" style="color:darkgray"></div>
+                <div class="song-album" style="color:darkgray">专辑</div>
+                <div class="song-time" style="color:darkgray">歌曲时长</div>
               </div>
             <div
               v-for="song in hotsongs "
@@ -58,10 +58,10 @@
         <div class="playlist-songs" v-else-if="checked === 2">
           <div class="playlist-songs-container">
             <div class="song-info">
-                <div class="song-name">歌曲名称</div>
-                <div class="song-artist"> </div>
-                <div class="song-album">专辑</div>
-                <div class="song-time">歌曲时长</div>
+                <div class="song-name" style="color:darkgray">歌曲名称</div>
+                <div class="song-artist" style="color:darkgray"></div>
+                <div class="song-album" style="color:darkgray">专辑</div>
+                <div class="song-time" style="color:darkgray">歌曲时长</div>
               </div>
             <div
               v-for="song in allsongs "
@@ -168,17 +168,24 @@
     console.log("播放单曲" ,song.id , song.name);
   }
   
-  const playAll = async () => {  
-    // playListInfoStore.setCurrentMusic(songs.value[0]);  
-    console.log("播放歌单:", name.value, "的全部歌曲囖");  
-      
-    const promises = songs.value.map(song => {  
-        return playListInfoStore.addPlayListBack(song);  
-    });  
-    await Promise.all(promises);  
-    console.log("All songs added to playlist.");  
-    //map 函数被用来创建一个包含每个歌曲对应的 Promise 的数组。然后，Promise.all 被用来等待所有的 Promise 都完成。这样就可以确保所有的歌曲都按照歌单的顺序添加到播放列表中。
+
+const playAll = async () => {    
+    console.log("播放歌单:", name.value, "的全部歌曲囖");    
+    if(checked.value === 1){  
+      for(let song of hotsongs.value){    
+        await playListInfoStore.addPlayListBack(song);    
+      }  
+      console.log("All songs added to playlist.");    
+    }  
+    else{  
+      for(let song of allsongs.value){    
+        await playListInfoStore.addPlayListBack(song);    
+      }  
+      console.log("All songs added to playlist.");    
+    }  
+    // playListInfoStore.isPlaying = true ;  
 }
+
 
 // 加载更多歌曲
 const loadMoreSongs = async () => {
@@ -297,8 +304,7 @@ const onChange = (i) =>{
     display: flex;
     justify-content: space-between;
 
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 13px;
     margin-bottom: 5px;
 
   }
@@ -311,6 +317,18 @@ const onChange = (i) =>{
 
   .playlist-songs{
     width: 100%;
+  }
+  .song-name{
+    width:30%;
+  }
+  .song-artist{
+    width:20%;
+  }
+  .song-album{
+    width:30%;
+  }
+  .song-time{
+    width:10%;
   }
 
 

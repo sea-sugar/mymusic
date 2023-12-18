@@ -117,7 +117,6 @@ const goToArtistdetail = (item) => {
   text-align: center;
   padding: 5px 10px;
   font-size: 14px;
-  background-color: #eaeaea;
   color: #333;
   cursor: pointer;
   border-radius: 4px;
@@ -155,7 +154,7 @@ img:hover{
   margin-top: 10px;
 }
 .tag.selected {
-  background-color: yellow;
+  background-color: #eaeaea;
   font-weight: bold;
 }
 </style>

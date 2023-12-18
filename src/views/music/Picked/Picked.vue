@@ -1,11 +1,12 @@
 <template>
     <div>
         <!-- Picked.vue 精选 -->
+        <Banner />
+        <Private />
+        <DjRecommend />
+        <MV />
     </div>
-    <Banner />
-    <Private />
-    <DjRecommend />
-    <MV />
+    
 </template>
 
 <script setup>

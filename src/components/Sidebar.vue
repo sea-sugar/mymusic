@@ -1,17 +1,18 @@
 <template>
   <div>
-    <el-col :span="20">
-      <h5 class="mb-2">sea_sugar_music</h5>
+    <el-col :span="25">
+      
+      <el-image style="width: 180px; height: auto; margin-top:50px; margin-bottom: 20px;" src="/image.png" fit="cover" />
       <el-menu
         default-active="index"
         class="el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
-        background-color="#ebf1f5"
-        text-color="#606266"
+        text-color="#000000"
         active-text-color="#2F74FF"
         router
       >
+      <!-- background-color="#f4f9fc" -->
       <!-- 是否启用 vue-router 模式。 启用该模式会在激活导航时以 index 作为 path 进行路由跳转 -->
         <el-menu-item index="/index">
           <span>推荐</span>

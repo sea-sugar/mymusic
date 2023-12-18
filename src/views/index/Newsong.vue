@@ -1,5 +1,8 @@
 <template>
-  <h1>推荐新音乐</h1>
+  <div style="display: flex; align-items: center;">
+      <h1 style="font-size: 20px;">推荐新音乐</h1>
+      <svg t="1702897850207" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14512" width="35" height="35"><path d="M644.266667 494.933333l-192 192-29.866667-29.866666 162.133333-162.133334-162.133333-162.133333 29.866667-29.866667 192 192z" fill="#2c2c2c" p-id="14513"></path></svg>
+  </div>
   <div class="container">
     <div class="image">
       <el-row :gutter="40">
@@ -82,6 +85,7 @@ const handleImageClick = (item) => {
   margin-bottom: 10px;
   transition: filter 0.3s; /* 添加过渡效果 */
   justify-content: space-between;
+  border-radius: 10px;
 }
 .image-item:hover{
   background-color: #cac6c6;
@@ -126,6 +130,7 @@ const handleImageClick = (item) => {
 .image-item img {
   width: 38%; /* 图片宽度占满父容器 */
   height: auto;
+  border-radius: 10px;
 }
 
 .text {

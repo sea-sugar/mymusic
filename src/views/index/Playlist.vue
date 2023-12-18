@@ -6,7 +6,7 @@
           <div class="playlist-info">
             <h1 class="playlist-name">{{ name }}</h1>
             <div class="playlist-creator">
-              <el-avatar :src="creator.avatarUrl"></el-avatar>
+              <el-avatar :src="creator.avatarUrl" ></el-avatar>
               <p class="creator-name">{{ creator.nickname }}</p>
             </div>
             <div class="playlist-description" :class="{ collapsed: descriptionCollapsed }">
@@ -20,15 +20,19 @@
         </div>
         <div class="playlist-tags">
           <span v-for="tag in tags" :key="tag" class="playlist-tag">{{ tag }}</span>
+          
         </div>
+
+
+        <div @click="playAll" style="font-size: 25px; font-weight: bold; cursor: pointer; margin-bottom: 20px;">播放全部</div>
         <div class="playlist-songs">
-          <h2 @click="playAll">播放全部</h2>
+          
           <div class="playlist-songs-container">
             <div class="song-info">
-                <div class="song-name">歌曲名称</div>
-                <div class="song-artist">歌手</div>
-                <div class="song-album">专辑</div>
-                <div class="song-time">歌曲时长</div>
+                <div class="song-name" style="color:darkgray">歌曲名称</div>
+                <div class="song-artist" style="color:darkgray">歌手</div>
+                <div class="song-album" style="color:darkgray">专辑</div>
+                <div class="song-time" style="color:darkgray">歌曲时长</div>
               </div>
             <div
               v-for="song in songs"
@@ -46,11 +50,12 @@
             </div>
           </div>
         </div>
+        <el-link :underline="false" @click="loadMore" v-if="!isLoadMore" style="left: 50%; margin-top: 2%;">加载更多歌曲</el-link>
       </div>
     </el-main>
-  </template>
+</template>
   
-  <script setup>
+<script setup>
   import { ref, onMounted,computed } from 'vue';
   import { useRoute } from 'vue-router';
   import { getPlaylistAll, getPlaylistDetail } from "../../apis/http";
@@ -69,13 +74,15 @@
   const descriptionCollapsed = ref(true);
   const tags = ref([]);
   const songs = ref([]);
-  
+  const currentnums = ref(10);
+  const allnums = ref(0);
+  const isLoadMore = ref(false);
   onMounted(async () => {
     try {
       // 获取歌单详情
       const playlistDetailResponse = await getPlaylistDetail(playlistId);
       const playlistDetail = playlistDetailResponse.data.playlist;
-  
+      allnums.value = playlistDetail.trackCount;//歌单歌曲总数
       name.value = playlistDetail.name;
       coverImgUrl.value = playlistDetail.coverImgUrl;
       creator.value = playlistDetail.creator;
@@ -85,7 +92,7 @@
       tags.value = playlistDetail.tags;
   
       // 获取歌单全部歌曲
-      const playlistSongsResponse = await getPlaylistAll(playlistId, 30, 1);
+      const playlistSongsResponse = await getPlaylistAll(playlistId, 10, 0);
       songs.value = playlistSongsResponse.data.songs;
 
     } catch (error) {
@@ -133,18 +140,40 @@
     console.log("播放单曲" ,song.id , song.name);
   }
 
-  const playAll = async () => {  
-    // playListInfoStore.setCurrentMusic(songs.value[0]);  
-    console.log("播放歌单:", name.value, "的全部歌曲囖");  
+
+  const playAll = async () => {    
+    console.log("播放歌单:", name.value, "的全部歌曲囖");    
+ 
+    for(let song of songs.value){    
+      await playListInfoStore.addPlayListBack(song);    
+    }  
+    console.log("All songs added to playlist.");    
+    // playListInfoStore.isPlaying = true ;  
+  }
+
+  const loadMore = async()=>{
+
+    try {
       
-    const promises = songs.value.map(song => {  
-        return playListInfoStore.addPlayListBack(song);  
-    });  
-    await Promise.all(promises);  
-    console.log("All songs added to playlist.");  
-    //map 函数被用来创建一个包含每个歌曲对应的 Promise 的数组。然后，Promise.all 被用来等待所有的 Promise 都完成。这样就可以确保所有的歌曲都按照歌单的顺序添加到播放列表中。
-}
-  </script>
+      const playlistSongsResponse = await getPlaylistAll(playlistId, 10, currentnums.value);
+      currentnums.value += 10 ;
+      songs.value.push(...playlistSongsResponse.data.songs);
+      if(currentnums.value>=allnums.value){
+        isLoadMore.value = true ;
+        console.log("currentnums.value",currentnums.value);
+        console.log("allnums.value",allnums.value);
+        return ;
+      }
+      console.log(playlistSongsResponse.data.songs);
+      console.log(songs.value);
+
+    } catch (error) {
+      console.log(error); 
+    }
+    
+  }
+
+</script>
   
   <style scoped>
   .playlist-details {
@@ -207,9 +236,9 @@
   }
   
   .playlist-tags {
+    margin-left: 40px;
     margin-bottom: 20px;
   }
-  
   .playlist-tag {
     display: inline-block;
     font-size: 12px;
@@ -239,13 +268,21 @@
     display: flex;
     justify-content: space-between;
 
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 13px;
     margin-bottom: 5px;
 
   }
-  .song-info div{
+  .song-name{
+    width:30%;
+  }
+  .song-artist{
     width:20%;
+  }
+  .song-album{
+    width:30%;
+  }
+  .song-time{
+    width:10%;
   }
   .playlist-song:hover {
     background-color: #f5f7fa;
@@ -256,4 +293,5 @@
   }
 
 
-  </style>
+
+</style>

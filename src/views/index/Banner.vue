@@ -1,5 +1,5 @@
 <template>
-  <h1>推荐</h1>
+  <h1 style="font-size: 25px; margin-left: 10px;">推荐</h1>
   <div class="container">
     <el-skeleton :loading="loading" animated>
       <template #template> 
@@ -8,18 +8,10 @@
       </template>
       <template #default>
         <!-- 骨架屏加载完成显示 -->
-        <!-- <el-row :gutter="30">
-          <el-col v-for="(item, index) in lists.slice(0, 6)" :key="item.imageUrl" :span="5">
-            <div class="banner_wrap">
-              <img :src="item.imageUrl" :alt="item.typeTitle" :class="`banner_img img-${index}`" @click="handleImageClick(item)"/>
-            </div>
-          </el-col>
-        </el-row> -->
         <swiper
         :modules="modules"
         :slides-per-view="4"
         :space-between="25"
-        
         @swiper="onSwiper"
         @slideChange="onSlideChange"
         
@@ -105,6 +97,7 @@ onMounted(fetchData);//以确保在组件挂载后立即执行数据获取，并
   margin: 10px; 
 }
 .banner_img {
+  border-radius: 10px;
   width: 100%; 
   margin: 10px; 
 }

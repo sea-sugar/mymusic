@@ -1,5 +1,8 @@
 <template>
-    <h1>官方榜</h1>
+    <div style="display: flex; align-items: center;">
+      <h1 style="font-size: 20px;">官方榜</h1>
+      <svg t="1702897850207" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14512" width="35" height="35"><path d="M644.266667 494.933333l-192 192-29.866667-29.866666 162.133333-162.133334-162.133333-162.133333 29.866667-29.866667 192 192z" fill="#2c2c2c" p-id="14513"></path></svg>
+    </div>
     <div class="container">
       <div class="detail" v-for="(list, index) in lists.slice(0, 4)" :key="list.id" @click="goToPlaylist(list)">
         <img :src="list.coverImgUrl" alt="" class="hvr-float-shadow">
@@ -11,7 +14,10 @@
         </div>
       </div>
     </div>
-    <h1>特色榜</h1>
+    <div style="display: flex; align-items: center;">
+      <h1 style="font-size: 20px;">特色榜</h1>
+      <svg t="1702897850207" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14512" width="35" height="35"><path d="M644.266667 494.933333l-192 192-29.866667-29.866666 162.133333-162.133334-162.133333-162.133333 29.866667-29.866667 192 192z" fill="#2c2c2c" p-id="14513"></path></svg>
+    </div>
     <div class="ordercontainer">
       <div class="order" v-for="(list, index) in lists.slice(4)" :key="list.id" @click="goToPlaylist(list)">
         <img :src="list.coverImgUrl" alt="" class="hvr-float-shadow">
@@ -67,6 +73,7 @@
     width: 23%;
     margin-bottom: 20px;
     border-radius: 25px;
+    background-color: #dddddd;
   }
   .detail:hover{
     cursor: pointer;
@@ -75,7 +82,7 @@
   
   .text {
     width: 100%;
-    background-color: #dddddd;
+
     flex-direction: column;
     display: flex;
     overflow: hidden;

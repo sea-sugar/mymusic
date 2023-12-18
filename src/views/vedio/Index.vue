@@ -8,7 +8,7 @@
         trigger="hover"
         content="加载中"
       >
-        <el-check-tag :checked="tag === t.name" @change="onChange(t.id)" v-for="(t,index) in vediotags " >{{ t.name }}</el-check-tag>
+        <el-check-tag :checked="tag === t.name" @change="onChange(t.id)" v-for="(t,index) in vediotags " class="check-tag">{{ t.name }}</el-check-tag>
         <template #reference>
           <el-button class="m-2">全部视频</el-button>
         </template>
@@ -113,6 +113,14 @@ onMounted(fetchData);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .check-tag{
+  background-color: #fff;
+  width: 8%;
+}
+
+  .check-tag:hover{
+    background-color: #f3f3f3;
   }
 
 </style>

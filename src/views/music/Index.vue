@@ -7,7 +7,7 @@
         class="el-menu-popper-demo"
         mode="horizontal"
         :popper-offset="16"
-        style="width: 40%"
+        style="width: 80%"
         router
       >
         <el-menu-item index="picked">精选</el-menu-item>
@@ -36,7 +36,8 @@
   width: 100%;
   height: auto;
   display: flex;
-  /* background-color: aliceblue; */
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .header-item {
