@@ -2,8 +2,9 @@ import axios from 'axios';
 
 // 创建一个自定义的 Axios 实例
 const instance = axios.create({
-  baseURL: 'http://127.0.0.1:3000', // 设置基本的 API 地址
-  timeout: 5000,
+  baseURL: 'https://mu-api.yuk0.com', // 设置基本的 API 地址
+  // baseURL: 'http://127.0.0.1:3000', // 设置基本的 API 地址
+  timeout: 8000,
 });
 // baseURL: 'https://api.trtst.com', // 设置基本的 API 地址
 

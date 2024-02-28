@@ -1,7 +1,7 @@
 <template>
   <el-main>
     <!-- 音乐馆 -->
-    <div class="header">
+    <div class="header" >
       <el-menu
         ellipsis
         class="el-menu-popper-demo"

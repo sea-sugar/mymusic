@@ -288,6 +288,17 @@ const checkMusic= (k)=>{
   });
 }
 
+//得该音乐的所有评论 ( 不需要登录 )  /comment/music?id=186016&limit=1
+const getComment = (i,o,l)=>{
+  return instance.get('/comment/music',{
+    params:{
+      id:i,
+      offset:o,
+      limit:l,
+    }
+  })
+}
+
 
 export {
     getBanner,
@@ -324,7 +335,7 @@ export {
     getVedioDetail,
     searchHot,
     searchSuggest,
-    checkMusic
-    
+    checkMusic,
+    getComment
     
 }

@@ -28,6 +28,7 @@
 import "vue3-video-play/dist/style.css";
 import { videoPlay } from "vue3-video-play";
 // https://github.com/xdlumia/vue3-video-play/issues/129 解决vue3-video-play导入报错问题
+// 将packages.json中的"module": "./dist/index.es.js"改为"module": "./dist/index.mjs"后，可以正常使用
 
 import { ref, onMounted,onBeforeMount,computed,reactive,watch,nextTick} from 'vue';
 import { useRoute } from 'vue-router';

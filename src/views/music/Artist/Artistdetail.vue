@@ -33,20 +33,20 @@
         <div class="playlist-songs" v-if="checked === 1">
           <div class="playlist-songs-container">
             <div class="song-info">
-              <div class="song-name" style="color:darkgray">歌曲名称</div>
+              <div class="song-name" style="color:darkgray">&nbsp; &nbsp;&nbsp; 歌曲名称</div>
                 <div class="song-artist" style="color:darkgray"></div>
                 <div class="song-album" style="color:darkgray">专辑</div>
                 <div class="song-time" style="color:darkgray">歌曲时长</div>
               </div>
             <div
-              v-for="song in hotsongs "
+              v-for="(song,index) in hotsongs "
               :key="song.id"
               class="playlist-song"
               @mouseover="handleMouseOver(song)"
               @mouseout="handleMouseOut"
             >
               <div @click="playThis(song)" class="song-info">
-                <div class="song-name">{{ song.name }}</div>
+                <div class="song-name"> {{ index + 1  }} &nbsp;&nbsp;{{ song.name }}</div>
                 <div class="song-artist"> </div>
                 <div class="song-album">{{ song.al.name }}</div>
                 <div class="song-time">{{ formattedTime(song.dt) }}</div>
@@ -58,20 +58,20 @@
         <div class="playlist-songs" v-else-if="checked === 2">
           <div class="playlist-songs-container">
             <div class="song-info">
-                <div class="song-name" style="color:darkgray">歌曲名称</div>
+                <div class="song-name" style="color:darkgray">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;歌曲名称</div>
                 <div class="song-artist" style="color:darkgray"></div>
                 <div class="song-album" style="color:darkgray">专辑</div>
                 <div class="song-time" style="color:darkgray">歌曲时长</div>
               </div>
             <div
-              v-for="song in allsongs "
+              v-for="(song,index) in allsongs "
               :key="song.id"
               class="playlist-song"
               @mouseover="handleMouseOver(song)"
               @mouseout="handleMouseOut"
             >
               <div @click="playThis(song)" class="song-info">
-                <div class="song-name">{{ song.name }}</div>
+                <div class="song-name">{{index + 1 }} &nbsp;  {{ song.name }}</div>
                 <div class="song-artist"> </div>
                 <div class="song-album">{{ song.al.name }}</div>
                 <div class="song-time">{{ formattedTime(song.dt) }}</div>

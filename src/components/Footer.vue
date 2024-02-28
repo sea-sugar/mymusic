@@ -1,6 +1,6 @@
 <template>
     <div class="container" part="container">
-      <div class="label">{{label}}</div>
+      <div class="label" @click="commentdrawer" >{{label}}</div>
       <div class="operate">
         <div class="operate-seq">
           <img src="/prev.svg" title="上一首" @click="prev">
@@ -44,19 +44,34 @@
           </template>
         </el-table-column>
       </el-table>
+    </el-drawer>
 
-
+    <el-drawer v-model="drawer2" title="歌曲评论" direction="btt" :size="800">
+      <div class="comment-container" >
+        <span v-if="offset == 0" class="loading-text">努力加载中！！！</span>
+        <div v-for="comment in currentComment" class="comment-item" >
+          <el-avatar :src="comment.user.avatarUrl" alt="用户头像" class="comment-avatar"></el-avatar>
+          <span class="comment-nickname">{{ comment.user.nickname }} : </span>
+          <div class="comment-content">
+            <span>{{ comment.content }}</span>
+          </div>
+          <span class="comment-location">{{ comment.timeStr }}&nbsp;&nbsp;{{ formatDate(comment.time) }}&nbsp;&nbsp;{{ comment.ipLocation.location }}</span>
+        </div>
+        <div class="loadMore" v-if="!isloading && offset != 0" @click="loadMore">加载更多......</div>
+      </div>
     </el-drawer>
 
 
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useplayListInfoStore } from '../store/index';
-import { formatTime } from "../utils/util";
+import { formatTime,formatDate} from "../utils/util";
+import { getComment } from "../apis/http";
 const playListInfoStore = useplayListInfoStore();
 const drawer = ref(false);
+const drawer2 = ref(false);
 const audioElement = ref(null);
 const label = ref('Sea-Sugar Player');
 const currentTime = ref(0);
@@ -66,7 +81,11 @@ const volume = ref(0.7);
 const isPlaying = ref(false);
 const isMuted = ref(false);
 const mode = ref(0);
+const currentMusicId = ref(0);
 let currentAudioIndex = 0;
+let currentComment = ref([]) ;
+const offset = ref(0);
+const isloading = ref(false);
 
 // 播放上一首
 const prev = () => {
@@ -229,6 +248,67 @@ const deleteRow = (index) => {
   playListInfoStore.playList.splice(index, 1)
 }
 
+const loadMore = async()=>{
+  console.log("isloading is ",isloading.value);
+  if (!isloading.value) {
+      try {
+        console.log('开始加载了!!!')
+        isloading.value = true;
+        let res = await getComment(playListInfoStore.currentMusic.id , offset.value ,10);
+        console.log("获取的数据",res.data);
+        currentComment.value.push(...res.data.comments);
+        console.log("保存的评论数据",currentComment.value);
+        offset.value += 1 ; 
+
+      } catch (error) {
+        console.log(error);
+      }
+      
+    } else {
+      alert('已经在加载了');
+      return ;
+    }
+    isloading.value = false;
+
+}
+
+
+const commentdrawer = async () =>{
+  drawer2.value = true ;
+  if(currentMusicId.value == playListInfoStore.currentMusic.id){ //当前播放音乐一致
+    try {
+      isloading.value = true ;
+      let res = await getComment(playListInfoStore.currentMusic.id , offset.value ,10);
+      console.log("获取的数据",res.data);
+      currentComment.value.push(...res.data.comments);
+      console.log("保存的评论数据",currentComment.value);
+      offset.value += 1 ; 
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  else{
+    try {
+      currentMusicId.value = playListInfoStore.currentMusic.id;
+      offset.value = 0;
+      let res = await getComment(playListInfoStore.currentMusic.id , offset.value ,15);
+      isloading.value = true ;
+      console.log("获取的数据",res.data);
+      currentComment.value = res.data.comments;
+      console.log("保存的评论数据",currentComment.value);
+      offset.value += 1 ; 
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  isloading.value = false;
+  await nextTick();
+  
+}
+
+
 </script>
 
 
@@ -251,6 +331,11 @@ input,img{
         font-size: 16px;
         color: #999;
     }
+   .label:hover{
+      cursor: pointer;
+      color:#666
+    }
+
     .label::before {
         content: '正在播放：';
         color: #999;
@@ -355,4 +440,50 @@ input,img{
         height: calc(2.5 * var(--1rem));
         width: 60px;
     }
+.comment-container {
+  width: 100%;
+  padding: 10px;
+}
+
+.loading-text {
+  font-weight: bold;
+  color: gray;
+}
+
+.comment-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.comment-item:hover{
+  background-color: #cecece;
+  cursor: pointer;
+}
+
+.comment-avatar {
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
+}
+
+.comment-nickname {
+  color: rgb(4, 132, 190);
+  margin-right: 5px;
+  font-size: 12px;
+}
+
+.comment-content {
+  margin-right: 10px;
+  font-size: 12px;
+}
+
+.comment-location {
+  margin-left: auto;
+  color: gray;
+  font-size: 12px;
+}
+
+.loadMore{
+  cursor: pointer;
+}
 </style>

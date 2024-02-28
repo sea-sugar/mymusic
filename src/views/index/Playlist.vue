@@ -29,19 +29,20 @@
           
           <div class="playlist-songs-container">
             <div class="song-info">
-                <div class="song-name" style="color:darkgray">歌曲名称</div>
+                &nbsp;<div class="song-name" style="color:darkgray">歌曲名称</div>
                 <div class="song-artist" style="color:darkgray">歌手</div>
                 <div class="song-album" style="color:darkgray">专辑</div>
                 <div class="song-time" style="color:darkgray">歌曲时长</div>
               </div>
             <div
-              v-for="song in songs"
+              v-for="(song , index) in songs"
               :key="song.id"
               class="playlist-song"
               @mouseover="handleMouseOver(song)"
               @mouseout="handleMouseOut"
             >
               <div @click="playThis(song)" class="song-info">
+                <div>{{ index + 1  }}</div>
                 <div class="song-name">{{ song.name }}</div>
                 <div class="song-artist">{{ song.ar[0].name }}</div>
                 <div class="song-album">{{ song.al.name }}</div>
@@ -189,6 +190,8 @@
   }
   
   .playlist-cover {
+    text-align: center;
+    justify-content: center;
     width: 200px;
     height: 200px;
     object-fit: cover;
