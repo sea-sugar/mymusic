@@ -5,6 +5,7 @@ const instance = axios.create({
   baseURL: 'https://mu-api.yuk0.com', // 设置基本的 API 地址
   // baseURL: 'http://127.0.0.1:3000', // 设置基本的 API 地址
   timeout: 8000,
+  withCredentials: true, // 启用请求携带cookie
 });
 // baseURL: 'https://api.trtst.com', // 设置基本的 API 地址
 

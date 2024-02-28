@@ -299,6 +299,19 @@ const getComment = (i,o,l)=>{
   })
 }
 
+// 发表评论 （需要登陆） /comment
+const submitComment = (t,type,id,content)=>{
+  let c = localStorage.getItem('cookie');
+  return instance.get('/comment',{
+    params:{
+      t:t,
+      type:type,
+      id:id,
+      content:content,
+      cookie:c,
+    },
+  })
+}
 
 export {
     getBanner,
@@ -336,6 +349,7 @@ export {
     searchHot,
     searchSuggest,
     checkMusic,
-    getComment
+    getComment,
+    submitComment
     
 }

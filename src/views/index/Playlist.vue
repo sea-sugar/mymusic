@@ -29,7 +29,7 @@
           
           <div class="playlist-songs-container">
             <div class="song-info">
-                &nbsp;<div class="song-name" style="color:darkgray">歌曲名称</div>
+                &nbsp;<div class="song-name" style="color:darkgray; margin-left: 4%; ">歌曲名称</div>
                 <div class="song-artist" style="color:darkgray">歌手</div>
                 <div class="song-album" style="color:darkgray">专辑</div>
                 <div class="song-time" style="color:darkgray">歌曲时长</div>
@@ -42,7 +42,8 @@
               @mouseout="handleMouseOut"
             >
               <div @click="playThis(song)" class="song-info">
-                <div>{{ index + 1  }}</div>
+                <div style="display: flex; align-items: center;">{{ index + 1  }}</div>
+                <el-avatar :src="song.al.picUrl" :alt="song.name" :size="35"></el-avatar>
                 <div class="song-name">{{ song.name }}</div>
                 <div class="song-artist">{{ song.ar[0].name }}</div>
                 <div class="song-album">{{ song.al.name }}</div>
@@ -277,15 +278,23 @@
   }
   .song-name{
     width:30%;
+    display: flex;
+    align-items: center;
   }
   .song-artist{
     width:20%;
+    display: flex;
+    align-items: center;
   }
   .song-album{
     width:30%;
+    display: flex;
+    align-items: center;
   }
   .song-time{
     width:10%;
+    display: flex;
+    align-items: center;
   }
   .playlist-song:hover {
     background-color: #f5f7fa;
@@ -294,7 +303,4 @@
   .playlist-songs{
     width: 100%;
   }
-
-
-
 </style>

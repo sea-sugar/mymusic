@@ -1,4 +1,5 @@
 <template>
+    <!-- 底部播放界面 -->
     <div class="container" part="container">
       <div class="label" @click="commentdrawer" >{{label}}</div>
       <div class="operate">
@@ -25,6 +26,7 @@
       </audio>
     </div>
 
+    <!-- 右侧播放列表 -->
     <el-drawer v-model="drawer" title="播放列表" :with-header="false" stripe >
       <span>播放列表</span>
       <el-table :data="playListInfoStore.playList">
@@ -46,16 +48,20 @@
       </el-table>
     </el-drawer>
 
+    <!-- 底部歌曲评论 -->
     <el-drawer v-model="drawer2" title="歌曲评论" direction="btt" :size="800">
       <div class="comment-container" >
+        <el-input v-model="inputcomment" placeholder="说点什么吧,也许Ta都听的到!" clearable  @keyup.enter="commentSubmit" style="margin-bottom: 20px;" />
         <span v-if="offset == 0" class="loading-text">努力加载中！！！</span>
-        <div v-for="comment in currentComment" class="comment-item" >
+        <div v-for="(comment, index) in currentComment" class="comment-item" >
           <el-avatar :src="comment.user.avatarUrl" alt="用户头像" class="comment-avatar"></el-avatar>
           <span class="comment-nickname">{{ comment.user.nickname }} : </span>
           <div class="comment-content">
-            <span>{{ comment.content }}</span>
+            <span @click="copyText(comment.content)">{{ comment.content }}</span>
           </div>
-          <span class="comment-location">{{ comment.timeStr }}&nbsp;&nbsp;{{ formatDate(comment.time) }}&nbsp;&nbsp;{{ comment.ipLocation.location }}</span>
+          <span class="comment-location"  >{{ comment.timeStr }}&nbsp;&nbsp;{{ formatDate(comment.time) }}&nbsp;&nbsp;{{ comment.ipLocation.location }}</span>
+          <!-- <img v-if="1" src="/shanchu.svg" title="删除评论" @click="deleteComment" style="padding-left:5px ;"> -->
+            <!-- 删除评论保留选项  -->
         </div>
         <div class="loadMore" v-if="!isloading && offset != 0" @click="loadMore">加载更多......</div>
       </div>
@@ -68,25 +74,27 @@
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useplayListInfoStore } from '../store/index';
 import { formatTime,formatDate} from "../utils/util";
-import { getComment } from "../apis/http";
-const playListInfoStore = useplayListInfoStore();
-const drawer = ref(false);
-const drawer2 = ref(false);
-const audioElement = ref(null);
-const label = ref('Sea-Sugar Player');
-const currentTime = ref(0);
-const totalTime = ref(0);
-const progress = ref(0);
-const volume = ref(0.7);
-const isPlaying = ref(false);
-const isMuted = ref(false);
-const mode = ref(0);
-const currentMusicId = ref(0);
-let currentAudioIndex = 0;
-let currentComment = ref([]) ;
-const offset = ref(0);
-const isloading = ref(false);
-
+import { getComment,submitComment} from "../apis/http";
+// import clipboard from 'clipboard'; //复制粘贴库
+import { ElNotification } from 'element-plus';
+const playListInfoStore = useplayListInfoStore(); //播放列表信息
+const drawer = ref(false); //右侧抽屉控制-播放列表
+const drawer2 = ref(false); //底部抽屉控制-歌曲评论列表
+const audioElement = ref(null); //原生audio标签的ref引用
+const label = ref('Sea-Sugar Player');//歌曲名称
+const currentTime = ref(0);//当前歌曲播放时刻
+const totalTime = ref(0);//当前歌曲总时长
+const progress = ref(0);//当前歌曲进度
+const volume = ref(0.7);//音量
+const isPlaying = ref(false);//是否正在播放
+const isMuted = ref(false);//是否静音
+const mode = ref(0);//歌曲播放模式
+const currentMusicId = ref(0);//当前音乐id
+let currentAudioIndex = 0;//在播放列表中正在播放的歌曲下标
+let currentComment = ref([]) ;//当前歌曲评论列表
+const offset = ref(0);//歌曲评论分页
+const isloading = ref(false);//是否正在加载评论
+const inputcomment = ref("说点什么吧，也许Ta都听的到!");//评论占位
 // 播放上一首
 const prev = () => {
   if(mode.value === 0){
@@ -206,6 +214,7 @@ const pauseAudio = () => {
   isPlaying.value = false;
 };
 
+// 监听音乐变换
 watch(() => playListInfoStore.currentMusic,(isnew,isold)=>{
   if(isPlaying.value){
     toggle();
@@ -215,7 +224,7 @@ watch(() => playListInfoStore.currentMusic,(isnew,isold)=>{
   console.log(playListInfoStore.playList);
 })
 
-
+// 切换音乐播放顺序 未完成
 const cmode = computed(()=>{
   if(mode.value === 0){//顺序播放
     return '/swap.svg'
@@ -228,6 +237,7 @@ const cmode = computed(()=>{
   }
 })
 
+// 歌曲播放模式的标题
 const cmodetitle = computed(()=>{
   if(mode.value === 0){
     return '顺序播放'
@@ -240,14 +250,17 @@ const cmodetitle = computed(()=>{
   }
 })
 
+// 播放顺序切换
 const modeChange = ()=>{
   mode.value = (mode.value + 1) % 3 ;
 }
 
+// 删除播放列表的某一首歌
 const deleteRow = (index) => {
   playListInfoStore.playList.splice(index, 1)
 }
 
+// 加载更多评论
 const loadMore = async()=>{
   console.log("isloading is ",isloading.value);
   if (!isloading.value) {
@@ -272,17 +285,17 @@ const loadMore = async()=>{
 
 }
 
-
+// 点击歌曲名称，打开评论列表，获取评论数据
 const commentdrawer = async () =>{
   drawer2.value = true ;
   if(currentMusicId.value == playListInfoStore.currentMusic.id){ //当前播放音乐一致
     try {
       isloading.value = true ;
-      let res = await getComment(playListInfoStore.currentMusic.id , offset.value ,10);
+      let res = await getComment(playListInfoStore.currentMusic.id , offset.value ,15);
       console.log("获取的数据",res.data);
       currentComment.value.push(...res.data.comments);
       console.log("保存的评论数据",currentComment.value);
-      offset.value += 1 ; 
+      offset.value += 15 ; 
       
     } catch (error) {
       console.log(error);
@@ -297,7 +310,7 @@ const commentdrawer = async () =>{
       console.log("获取的数据",res.data);
       currentComment.value = res.data.comments;
       console.log("保存的评论数据",currentComment.value);
-      offset.value += 1 ; 
+      offset.value += 15 ; 
       
     } catch (error) {
       console.log(error);
@@ -306,6 +319,42 @@ const commentdrawer = async () =>{
   isloading.value = false;
   await nextTick();
   
+}
+
+// 复制评论内容
+const copyText =(text) =>{
+  navigator.clipboard.writeText(text);
+  ElNotification({
+    message: '复制成功',
+    type: 'success',
+  })
+
+}
+
+// 提交评论
+const commentSubmit = async ()=>{
+  console.log("回车键被按下，输入框的值为：" + inputcomment.value);
+  isloading.value = true ;
+  if((window.localStorage.getItem('isLogin') !== 'true')){
+    // 未登录状态
+    alert('请点击右上角登陆!');
+    return ;
+  }
+  let res = await submitComment(1,0, playListInfoStore.currentMusic.id ,inputcomment.value);
+  console.log(res.data);
+  if (res.data.code == 200) {
+    console.log("发表成功!");
+    currentComment.value.unshift(res.data.comment);
+    currentComment.value[0].timeStr = '刚刚';
+    currentComment.value[0].ipLocation = { location: '未知' };
+    console.log( "test 1111",currentComment.value);
+
+    inputcomment.value = ' ';
+    await nextTick();
+  } else {
+    console.log("发表失败!");
+  }
+  isloading.value = false;
 }
 
 

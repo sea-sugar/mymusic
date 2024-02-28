@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <!-- 这里可以放一个前进后退的标签管理 -->
-    <!-- 搜索框 -->
+      <!-- 顶部搜索框 -->
     <div class="search">
       <!-- <el-input class="search-input" v-model="searchWord" placeholder="请输入歌名、歌词、歌手或专辑" clearable></el-input> -->
 
@@ -14,15 +14,10 @@
         
         
       >
-
       <div class="searchlist" v-for="(item,index) in searchHotlist" :key="index" v-if="!isSuggest" @click="handleSelectHot(item)">{{item.first}}</div>
-      <!-- <el-divider content-position="left"  v-if="isSuggest">单曲</el-divider> -->
       <div class="searchlist" v-for="(item,index) in searchSuggestsongslist" :key="index" v-if="isSuggest" @click="handleSelectsong(item)">{{item.name}}-{{ item.artists[0].name }} <div style="margin-left: auto;">——单曲</div></div>
-      <!-- <el-divider content-position="left"  v-if="isSuggest">歌手</el-divider> -->
       <div class="searchlist" v-for="(item,index) in searchSuggestartistslist" :key="index" v-if="isSuggest" @click="handleSelectartist(item)">{{item.name}} <div style="margin-left: auto; font-size: 12px;">——歌手</div></div>
-      <!-- <el-divider content-position="left"  v-if="isSuggest"></el-divider> -->
       <div class="searchlist" v-for="(item,index) in searchSuggestalbumslist" :key="index" v-if="isSuggest" @click="handleSelectalbum(item)">{{item.name}}-{{ item.artist.name }} <div style="margin-left: auto;">——专辑</div></div>
-      <!-- <el-divider content-position="left"  v-if="isSuggest">歌单</el-divider> -->
       <div class="searchlist" v-for="(item,index) in searchSuggestplaylist" :key="index" v-if="isSuggest" @click="handleSelectplaylist(item)">{{item.name}} <div style="margin-left: auto; font-size: 12px;">——歌单</div></div>
 
         <template #reference>
@@ -45,16 +40,16 @@
         <el-popover
           placement="top-start"
           title="用户信息"
-          width="12%"
+          width="15%"
           height="50%"
           trigger="hover"
           content="UserInfo"
         >
           <div style= " justify-items: center ;">
-            <div >生日:{{ timestampToTime(userInfoStore.userInfo.birthday) }}</div>
+            <div >生日:{{ formatDateymd(userInfoStore.userInfo.birthday) }}</div>
             <!-- <div >个性签名:{{ userInfoStore.userInfo.signature }}</div> -->
             <div >上次登录ip:{{ userInfoStore.userInfo.lastLoginIP}}</div>
-            <div >上次登录时间:{{ timestampToTime(userInfoStore.userInfo.lastLoginTime)}}</div>
+            <div >上次登录时间:{{ formatDate(userInfoStore.userInfo.lastLoginTime)}}</div>
           </div>
           
           <el-divider><el-icon><star-filled /></el-icon></el-divider>
@@ -108,20 +103,21 @@ import { Picture as IconPicture ,Avatar} from '@element-plus/icons-vue'
 import router from '../router/index'
 import { ElNotification } from 'element-plus'
 import { useplayListInfoStore } from '../store/index';
+import {formatDate,formatDateymd} from '../utils/util';
 const playListInfoStore = useplayListInfoStore()
 const userInfoStore = useuserInfoStore();
-const searchWord = ref('');
-const showLogin = ref(false);
-const qrkey = ref('');
-const qrurl = ref('');
-const msg = ref('');
-const qrtime = ref(0);
-const searchHotlist = ref([]);
-const searchSuggestsongslist = ref([]);
-const searchSuggestartistslist = ref([]);
-const searchSuggestalbumslist = ref([]);
-const searchSuggestplaylist = ref([]);
-const isSuggest = ref(false);
+const searchWord = ref('');// 当前搜索词汇 
+const showLogin = ref(false);// 登录弹出框
+const qrkey = ref(''); // 二维码key
+const qrurl = ref(''); // 二维码url
+const msg = ref(''); // 二维码提示消息
+const qrtime = ref(0); // 二维码超时时间 5min
+const searchHotlist = ref([]); // 热搜列表
+const searchSuggestsongslist = ref([]); // 搜索歌曲列表
+const searchSuggestartistslist = ref([]);// 搜索歌手列表
+const searchSuggestalbumslist = ref([]);// 搜索专辑列表
+const searchSuggestplaylist = ref([]);// 搜索歌单3列表
+const isSuggest = ref(false); // 是否正在搜索
 const loginHandler = ()=>{
   //打开弹出框
   showLogin.value = true;
@@ -134,7 +130,7 @@ const loginsuccess = () => {
     type: 'success',
   })
 }
-
+// 登录
 const login = async () => {
   let nowtime = Date.now();
   if((nowtime - qrtime.value) / 1000 > 300){  //超时 或者 第一次登录 
@@ -209,7 +205,7 @@ onMounted(async () =>{
 
 })
 
-
+// 重新登录
 const loginagain =()=>{
   if(msg.value === '二维码已过期，请刷新重试'){
     login();
@@ -218,29 +214,7 @@ const loginagain =()=>{
 }
 
 const size = ref('200px')
-const blockMargin = computed(() => {
-  const marginMap = {
-    large: '32px',
-    default: '28px',
-    small: '24px',
-  }
-  return {
-    marginTop: marginMap[size.value] || marginMap.default,
-  }
-})
 
-/* 时间戳转换为时间 */
-const timestampToTime = (timestamp) => {
-    timestamp = timestamp ? timestamp : null;
-    let date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-    let Y = date.getFullYear() + '-';
-    let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-    let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
-    let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
-    let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
-    let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-    return Y + M + D ;
-}
 
 
 const logoutsuccess = () => {
@@ -250,6 +224,7 @@ const logoutsuccess = () => {
   })
 }
 
+// 退出登录
 const out = async ()=>{
   const res = await logout();
   console.log(res);
@@ -258,15 +233,15 @@ const out = async ()=>{
   userInfoStore.userInfo = null;
   logoutsuccess()
 }
-
+// 监听searchWord变化
 watch(searchWord, (newword) => {
-  // 监听searchWord变化
   if (newword === '') {
     isSuggest.value = false ;
   }
   remoteMethod(newword);
   console.log("监听searchWord变化为: ",newword);
 });
+
 
 const remoteMethod = async (searchWord)=>{
   console.log("获取新的搜索建议");
@@ -305,45 +280,54 @@ const remoteMethod = async (searchWord)=>{
     }
   
 }
-
+// 跳转歌单详情页
 const handleSelectplaylist = (item) =>{
   console.log("handleSelectplaylist",item.name);
   router.push(`/playlist?id=${item.id}`);
   searchWord.value = item.name ;
 }
 
+// 跳转专辑详情页
 const handleSelectalbum = (item) =>{
   console.log("handleSelectalbum",item.name);
   router.push(`/playlist?id=${item.id}`);
   searchWord.value = item.name + item.artist.name ;
 }
+
+// 跳转歌手详情页
 const handleSelectartist = (item) =>{
   console.log("handleSelectartist",item.name);
   router.push(`/artistdetail?id=${item.id}`);
   searchWord.value = item.name ;
 }
 
+// 点击热搜
 const handleSelectHot = (item) =>{
   console.log("handleSelectHot",item.first);
   searchWord.value = item.first ;
 }
 
+// 点击单曲，直接播放
 const handleSelectsong = (item) =>{
   console.log("handleSelectsong",item.name);
   playListInfoStore.setCurrentMusic(item);
   searchWord.value = item.name + item.artists[0].name ;
 }
 
+// 搜索详情页 没写
 const search = () =>{
   console.log("好好好你搜索了，但是我没有写！");
 }
+
+// 刷新二维码
 const Refresh = async()=>{
   qrtime.value = 0;
   login();
 }
 
+// 跳转链接
 const openGitHubLink = ()=>{
-  window.open('https://github.com/sea-sugar/mymusic', '_blank'); // 替换为您想要跳转的链接  
+  window.open('https://github.com/sea-sugar/mymusic', '_blank'); 
 }
 
 </script>
